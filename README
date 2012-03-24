@@ -1,0 +1,5 @@
+Basecoat is designed to cover the basics: MVC, Front Controller, templating, and database abstraction. It does not enforce a coding style, naming convention, or have require many dependencies. Thus it is well suited for migrating a current site to a more manageable architecture. 
+Since there aren't many dependencies, you can run "old code" under the framework so you don't have to run the risk of a massive single release upgrade. But it is also well suited to building sites from scratch and has been used to build Facebook applications with a combined installed base of over 1.5 million.
+With less than 25 files in it's base form, it is a very approachable framework that is easy to learn. You should be able start creating page within the first hour or two.
+
+The examples directory contains documentation, which was written using the framework so it acts as both documentation and an example of how to work with the framework. To load the framework, just put the directory in a web accessible area and point your browser at the www directory.
