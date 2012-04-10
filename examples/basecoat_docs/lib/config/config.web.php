@@ -32,6 +32,7 @@ Config::$route_param		= 'page';
 // Set page title prefix
 Content::$page->add('sitename', 'Basecoat');
 Content::$page->add('title',Content::$page->sitename . ': ');
+Content::$page->add('lang', 'en', false);
 
 
 /*
