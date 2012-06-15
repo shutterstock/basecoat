@@ -149,7 +149,7 @@ Primary Routes List (<?php echo count($this->routes);?>)
 </div>
 
 <div>
-<table cellpadding="0" cellspacing="0" id="config_grid">
+<table class="table table-striped table-condensed">
 <th>Route</th>
 <th>Data Only</th>
 <th>HTTPS</th>

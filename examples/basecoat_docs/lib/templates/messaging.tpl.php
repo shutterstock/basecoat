@@ -2,9 +2,9 @@
 Messaging
 </div>
 <p>
-<?php echo Content::$page->sitename;?> comes with a basic user message display system that includes 3 display types: info, warn and error.
+<?php echo Content::$page->sitename;?> comes with a basic message display system that includes 3 display types: info, warn and error.
 Any messages that have been registered will automatically be displayed on the next full page output.
-Messages are stored in the session so that they are not lost if there is a page redirect or are  in an ajax call.
+Messages are stored in the session so that they are not lost if there is a page redirect.
 <br />
 The Messages class is part of the Content class since the message class registers the instance of itself in the <code>Content::$messages</code> variable.
 </p>

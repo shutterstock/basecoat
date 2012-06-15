@@ -37,7 +37,7 @@ Content::$page->add('lang', 'en', false);
 
 /*
  -- Configure default template includes --
- These will be automatically used for each route
+ These will be automatically used for each page
  unless the route overrides/clears them 
  within the route itself.
  These are run after all routes are run and are
@@ -50,13 +50,6 @@ Config::$page_includes	= array(
 	'page_header'	=> PATH_TEMPLATES . 'common/header.php',
 	'page_footer'	=> PATH_TEMPLATES . 'common/footer.php',
 );
-
-/*
- Configure files to load before running any routes
- Typically this will be an additional config/load file
- that will load files that may take advantage of what
- route was requested
-*/
 
 /******************************************************************************
  * Layouts - Containers for the templates

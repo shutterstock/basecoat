@@ -83,7 +83,7 @@ Note: A connection to the database is not made until a query is run that require
 
 
 <div class="section_title">
-Running a SELECT query
+SELECT
 </div>
 <p>
 Select queries are run against the default connection of the instance being used. This behavior can be overridden by specifying and extra "user master" parameter when call a select function. When select queries are run, the data is not retrieve until a "fetch" function is run, or the "fetch all" parameter is used in the select function.
@@ -202,13 +202,11 @@ BSP::$db->fetchAll($result_set, $bindings, true);
 
 
 <div class="section_title">
-INSERTs and Bulk Inserts
+INSERT
 </div>
 <p>
 The insert functional is fairly flexible in that it can handle INSERTs or REPLACEs, modifiers (i.e. IGNORE, DELAYED), along with bulk inserts. Inserts default to running against the master, but can be overridden to perform the insert on the instance's default connection. At the most basic level, the insert function accepts two parameters: a table name, and an associative array. The array keys must match the field names in the database table being inserted into. The data should not be escaped, the function will handle any needed escaping.
-
 To perform a bulk insert, simply pass an array containing multiple associative arrays. Note that each array entry must have the same set of keys. The function automatically determines if a bulk insert should be performed. Bulk inserts are broken up into multiple insert queries with a maximum of 100 records per insert query. This can be changed/tuned by modifying the $bulkInsertSize public class variable. Bulk inserts have been successfully run on a 30,000 entry array.
-
 The function will return the number of records that were inserted. To get the last insert ID, call the getLastInsertId() function. Remember to pass a "false" parameter if the insert did not run against the master.
 
 

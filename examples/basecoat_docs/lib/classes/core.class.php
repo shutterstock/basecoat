@@ -1,68 +1,124 @@
 <?php
-
+/**
+* Configuration information, static to make it globally easily accessible
+*
+* @author Brent Baisley <brent@bigstockphoto.com>
+*/
 class Config {
 	public static $debug		= false;
 	
-	// Authentication file to load
-	public static $auth_inc		= '';
-	
-	// What mode to run in (dev, prod)
+	/**
+	* What mode to run in (dev, prod)
+	*
+	* Different configuration can be loaded based on this value
+	*/
 	public static $run_mode		= 'prod';
 	
-	// What environment running under (web, cli)
+	/**
+	* What environment running under (web, cli)
+	*
+	* Framework load process changes based on this value
+	*/
 	public static $run_env		= 'web';
 	
-	// Is the request from a bot
+	/*
+	* Is the request from a bot
+	*
+	* This can be checked to avoid logging bot traffic
+	*/
 	public static $bot_request	= false;
 	
-	// Which parameter to user to determine page requested.
-	// Set to 'rewrite' if using pretty urls (i.e. mod_rewrite)
+	/**
+	* Which parameter to user to determine page requested.
+	* Set to 'rewrite' if using pretty urls (i.e. mod_rewrite)
+	*/
 	public static $use_pretty_urls	= false;
+	
+	/**
+	* URL parameter to check for to determine route to run
+	*/
 	public static $route_param	= 'page';
 	
-	// Any other settings that should be stored
-	public static $settings = array(
-		);
-	
-	// Files to include prior to running any routes
+	/**
+	* Files to include prior to running any routes
+	*/
 	public static $pre_includes		= array();
 	
-	// Files to include after running routes, but before page output
+	/**
+	* Files to include after running routes, but before page output
+	*/
 	public static $page_includes	= array();
 	
-	// Files to include after page output (i.e. logging)
+	/**
+	* Files to include after page output (i.e. logging)
+	*/
 	public static $post_includes	= array();
+	
+	/**
+	* Any other settings that need be stored
+	*/
+	public static $settings = array();
 	
 }
 
+// Setup base class object to hold instances of core classes
+Core::$bc	= new stdClass;
 class Core {
-	// Holder for an instance of the database class
-	static public $db			= NULL;
-	// List of routes requested to be run
+	/**
+	* List of routes requested to be run
+	* Determined by parsing the URL
+	*/
 	static public $run_routes	= array();
-	// Which route to run
+	
+	/**
+	* Which route to run
+	*/
 	static public $current_route	= 'default';
+	
+	/**
+	* Originally requested route to be run
+	*/
 	static public $requested_route	= null;
+	
+	/**
+	* Last route that was run
+	*/
 	static public $last_run_route	= null;
-	// Which file(s) to run after the page has been outputted
+	
+	/*
+	* Which file(s) to run after the page has been outputted
+	*/
 	static public $page_wrapup	= array();
+		
+	/**
+	* stdClass obejct to hold instances of base classes
+	*/
+	static public $bc			= null;
 	
-	// Initialize memcache variables
-	static public $mc_session	= null;
-	static public $mc_data		= null;
-	
-	// Varibles to hold class instances
-	static public $messages		= null;
-	static public $facebook		= null;
+	/**
+	* Variable to hold auth class instance
+	*/
 	static public $auth			= null;
-	static public $is_logged_in	= false;
+
+	/**
+	* Contains profiling information for code that is run
+	*
+	* This will contain routes run, timings for each route,
+	* number of route loops executed, etc.
+	*/
+	static public $profiling	= array();
 	
-	// Configuration information
-	static public $profiling;
+	/**
+	* Whether to enable profiling
+	*/
+	static public $profiling_enabled	= false;
 	
-	static public function runRoute() {
-	}
-	
+	/**
+	* Set the next route to run
+	*
+	* @param String $name name of route to run, must be in route index
+	* @param Boolean $change_layout change layout to the one defined by the new route if present
+	*/
 	static public function setRoute($name, $change_layout=false) {
 		self::$current_route 		= $name;
 		if ( $change_layout ) {
@@ -72,15 +128,17 @@ class Core {
 			}
 		}
 	}
-	
-	static public function setLayout( $layout ) {
-		Content::$layout	= $layout;
-	}
-	
+		
+	/**
+	* Check if user is currently logged in
+	*
+	* @return Boolean login status
+	*/
 	static public function checkLogin() {
 		if ( isset($_SESSION['is_logged_in']) && $_SESSION['is_logged_in'] ) {
 			self::$is_logged_in	= true;
 		}
+		return self::$is_logged_in;
 	}
 	
 	/**

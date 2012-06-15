@@ -39,7 +39,7 @@ All other files are the in the /lib directory, which may placed outside of the w
 The <code>index.php</code> file must declare where the /lib directory is located, and then load the <code>bootstrap.web.php</code> file.
 All include paths are then configured automatically relative to /lib.</p>
 
-<pre>
+<pre class="pre-scrollable">
 /www
 	index.php
 	/css

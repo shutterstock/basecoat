@@ -9,38 +9,43 @@ if ( get_magic_quotes_gpc() ) {
 	$_POST	= array_map('cleanup_post',$_POST);
 }
 
-// Load core initialization file to setup
-include_once( dirname(dirname(__FILE__)) . '/lib/bootstrap.inc.php');
-
 // Execute actions until no new actions are specified.
 // Count the numbers of loops in case we get stuck in an infinite loop
 $route_loop_cntr		= 0;
 $route_inc_cntr			= 0;
-Core::$profiling['start']	= round(microtime(true),3);
-Core::$profiling['page']	= Core::$current_route;
+$max_loops				= 5;
+
+// Load core initialization file to setup
+include_once( dirname(dirname(__FILE__)) . '/lib/bootstrap.inc.php');
+
+if (Core::$profiling_enabled) {
+	Core::$profiling['start']	= $route_start_time = round(microtime(true),3);
+	Core::$profiling['page']	= Core::$current_route;
+}
 
 // Run any pre processing files
 if ( count(Config::$pre_includes)>0 ) {
-	$route_start_time	= round(microtime(true),3);
 	foreach (Config::$pre_includes as $inc) {
 		include($inc);
 	}
-	$route_end_time	= round(microtime(true),3);
-	$route_loop_cntr++;
-	Core::$profiling['routes'][]	= array(
-		'route'=>'pre-includes',
-		'file'=>count(Config::$pre_includes),
-		'time'=>$route_end_time-$route_start_time, 
-		'start'=>$route_start_time,
-		'end'=>$route_end_time,
-		'seq'=>$route_loop_cntr
-		);
+	if (Core::$profiling_enabled) {
+		Core::$profiling['start'] = $route_end_time	= round(microtime(true),3);
+		$route_loop_cntr++;
+		Core::$profiling['routes'][]	= array(
+			'route'=>'pre-includes',
+			'file'=>count(Config::$pre_includes),
+			'time'=>$route_end_time-$route_start_time, 
+			'start'=>$route_start_time,
+			'end'=>$route_end_time,
+			'seq'=>$route_loop_cntr
+			);
+		$route_start_time	= $route_end_time;
+	}
 }
 
 do {
 	// Save current route so we can check if it changes later
 	Core::$last_run_route		= Core::$current_route;
-	$route_start_time	= round(microtime(true),3);
 	// Make sure it's a valid route
 	if ( array_key_exists( Core::$current_route, $_ROUTES_ ) ) {
 		// Check if login is required
@@ -60,24 +65,29 @@ do {
 			echo 'NO ROUTE OR ROUTE FILE: '.Core::$current_route;
 		}
 	} else {
-		echo "Sorry, but I'm afraid I can't do that. " . Core::$current_route . ": [".Core::$last_run_route."]";
+		error_log("Sorry, but I'm afraid I can't do that. " . Core::$current_route . ": [".Core::$last_run_route."]");
 	}
-	$route_end_time	= round(microtime(true),3);
+	if (Core::$profiling_enabled) {
+		$route_end_time	= round(microtime(true),3);
+		// Log profiling information
+		Core::$profiling['routes'][]	= array(
+			'route'=>Core::$last_run_route,
+			'file'=>$_ROUTES_[Core::$last_run_route]['file'],
+			'time'=>$route_end_time-$route_start_time, 
+			'start'=>$route_start_time,
+			'end'=>$route_end_time,
+			'seq'=>$route_loop_cntr
+			);
+		$route_start_time	= $route_end_time;
+	}
 	$route_loop_cntr++;
-	// Log profiling information
-	Core::$profiling['routes'][]	= array(
-		'route'=>Core::$last_run_route,
-		'file'=>$_ROUTES_[Core::$last_run_route]['file'],
-		'time'=>$route_end_time-$route_start_time, 
-		'start'=>$route_start_time,
-		'end'=>$route_end_time,
-		'seq'=>$route_loop_cntr
-		);
-} while (Core::$last_run_route != Core::$current_route && $route_loop_cntr<=5);
-Core::$profiling['end']		= round(microtime(true),3);
-Core::$profiling['files']	= $route_inc_cntr;
-Core::$profiling['loops']	= $route_loop_cntr;
-Core::$profiling['time']	= Core::$profiling['end']-Core::$profiling['start'];
+} while (Core::$last_run_route != Core::$current_route && $route_loop_cntr<=$max_loops);
+if (Core::$profiling_enabled) {
+	Core::$profiling['end']		= round(microtime(true),3);
+	Core::$profiling['files']	= $route_inc_cntr;
+	Core::$profiling['loops']	= $route_loop_cntr;
+	Core::$profiling['time']	= Core::$profiling['end']-Core::$profiling['start'];
+}
 
 // Check if we've gone loopy
 if ( $route_loop_cntr>5 ) {
