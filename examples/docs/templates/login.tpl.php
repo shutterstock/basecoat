@@ -7,7 +7,7 @@ if ( Core::$auth->is_logged_in ) {
 <p>
 <form method="POST" action="">
 <input type="hidden" name="loginout" value="out">
-<input type="submit" value="Logout">
+<button type="submit" class="btn" value="Logout" >Logout</button>
 </form>
 </p>
 <?php
@@ -19,7 +19,7 @@ if ( Core::$auth->is_logged_in ) {
 <p>
 <form method="POST" action="">
 <input type="hidden" name="loginout" value="in">
-<input type="submit" value="Login">
+<button value="Login" type="submit" class="btn" >Login</button>
 </form>
 </p>
 <?php

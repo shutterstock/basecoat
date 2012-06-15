@@ -1,6 +1,6 @@
-<div class="section_title">
+<h2>
 Content, Templates &amp; Layouts
-</div>
+</h2>
 <p>
 Content management and output is based around layouts and templates.
 The built-in templating system uses standard PHP for building pages and outputting the result.
@@ -15,9 +15,10 @@ Each route creates it's own instance of the content class for loading and proces
 Once the route has completed processing, the content is merge into the master instance for final output by the Front Controller.
 </p>
 
-<div class="subsection_title">
+<br />
+<h3>
 Layouts
-</div>
+</h3>
 <p>
 Layouts are the base page structure that snippets are merged into.
 A typical site will have very few layout files since they contain only content common across multiple pages
@@ -62,9 +63,10 @@ TEXT
 );?>
 </pre>
 
-<div class="subsection_title">
+<br />
+<h3>
 Templates
-</div>
+</h3>
 <p>
 Templates are loaded by the route file, processed by the content class, and are eventually merged into the defined layout for the page.
 By default, it is assumed a template file contains only content to be placed in the body of the page.
@@ -123,9 +125,10 @@ unset($content);
 </pre>
 </p>
 
-<div class="subsection_title">
+<br />
+<h3>
 Content Class
-</div>
+</h3>
 <p>
 The <code>content.class.php</code> is the key to managing content that is merged with templates and layouts.
 Each route should create it's own instance of the content class for "registering" data to be used in the templates and layouts.
@@ -191,3 +194,9 @@ Returns array of all the content blocks that currently exist in the instance.
 Merges the namespaced content blocks into the <code>Content::$page</code> instance.
 </p>
 
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
