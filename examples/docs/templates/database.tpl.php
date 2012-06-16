@@ -1,7 +1,7 @@
 @body>
-<div class="section_title">
+<h2 class="page-header">
 Database
-</div>
+</h2>
 <p>
 <?php echo Content::$page->sitename;?> comes with a stand alone database class that uses PDO and is designed to use MySQL as the backend. 
 While the database class is fairly powerful, it is not designed to be an ORM and does require knowledge of SQL to use.
@@ -23,10 +23,10 @@ Very large bulk inserts are automatically broken up, and multiple bulk inserts p
 
 </p>
 
-
-<div class="section_title">
+<br />
+<h3>
 Loading and Configuration
-</div>
+</h3>
 <p>
 The class requires that it be configured for use prior to creating instances of the class. 
 Each instance of the class will have 2 connection handles, one to the database instance specified on instantiation (i.e. slave) and one to the master. 
@@ -66,10 +66,10 @@ array(
 </pre>
 
 </p>
-
-<div class="subsection_title">
+<br />
+<h3>
 Instantiation
-</div>
+</h3>
 <p>
 To create an instance of the database class, call the <code>getServerInstance()</code> function. 
 Specify which connection setting to use by passing the "key" of the item in the <code>$server</code> configuration list to use. 
@@ -85,10 +85,10 @@ $db2_1 = DB::getServerInstance(2, true);
 Note: A connection to the database is not made until a query is run that requires the connection, so there is little overhead in creating database instances.
 </p>
 
-
-<div class="section_title">
+<br />
+<h3>
 SELECT
-</div>
+</h3>
 <p>
 SELECT queries are run against the default connection for the instance being used (i.e. slave connection). 
 This behavior can be overridden by specifying and extra "use master" parameter when called, if real time data is needed. 
@@ -141,9 +141,9 @@ $data = Core::$db->selectOne( $query, array('value1'=>'X') );
 </pre>
 </p>
 
-<div class="subsection_title">
+<h3>
 Fetching Data
-</div>
+</h3>
 <p>
 Once a select is run, the result set would need to be retrieved. 
 This can be done using the <code>fetch</code> or <code>fetchAll</code> functions.
@@ -214,10 +214,10 @@ array(
 </pre>
 </p>
 
-
-<div class="section_title">
+<br />
+<h3>
 INSERT
-</div>
+</h3>
 <p>
 Inserts couldn't be simpler, just pass a table name and an associative array.
 The associative array is a set a field/value pairs that match the table fields.
@@ -258,17 +258,19 @@ Returns the auto increment value of the last inserted record.
 </p>
 
 
-<div class="section_title">
+<br />
+<h3>
 UPDATE
-</div>
+</h3>
 <p>
 The <code>update</code> function is very similar to the <code>insert</code> function, except that it includes a filter for a parameter.
 
 
 
-<div class="subsection_title">
+<br />
+<h3>
 Special Inserts
-</div>
+</h3>
 <p>
 Sometimes there is a need to perform an insert with formulas and/or special functions (i.e. NOW(), field+1). In cases like these, a name/value data pairing will not work. The prepare/execute combination should be used when you need to do special inserts like these. This still permits using the PDO bindings for escaping the data.
 Note: You must specify to use the master connection for both prepare and execute, both functions default to using the slave connection.
@@ -282,4 +284,9 @@ if ( $presult==1 ) {
 }
 </pre>
 
+
 </p>
+<br />
+<br />
+<br />
+<br />

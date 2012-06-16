@@ -2,6 +2,8 @@
 ini_set('display_errors', true);
 error_reporting(E_ALL);
 
+header('Content-Type: text/html; charset=utf-8');
+
 define('SITE_DIR', realpath('../').'/');
 
 define('BC_CONFIGS', SITE_DIR . 'config/');

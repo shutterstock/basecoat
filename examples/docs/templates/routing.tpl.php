@@ -15,9 +15,10 @@
 }
 
 @body>
-<div class="section_title">
+
+<h2 class="page-header">
 Routing
-</div>
+</h2>
 <p>
 The entire process flow is based around the concept of routes.
 Every request that comes in is parsed to determine what route should be run.
@@ -47,9 +48,10 @@ Core::$routes	= array(
 </pre>
 </p>
 
-<div class="subsection_title">
+<br />
+<h3>
 Route Stack
-</div>
+</h3>
 <p>
 When a web request comes in, the <code>url_parser.php</code> file will analyze the URL, parse it into routes that need to run,
 and verify that the initial route is a valid one.
@@ -72,9 +74,10 @@ Routes can also add to the list of valid routes, or overload routes already defi
 This allows chaining and dynamic loading of different routes based on conditions, instead of using redirects.
 </p>
 
-<div class="subsection_title">
+<br />
+<h3>
 Subroutes
-</div>
+</h3>
 <p>
 The Front Controller will execute routes as long as the Core::$current_route does not match the previous route that was run.
 It is the responsibility of the currently running route to chain the routes by changing the Core::$current_route value.
@@ -110,9 +113,10 @@ return;
 </pre>
 </p>
 
-<div class="subsection_title">
+<br />
+<h3>
 Route Settings
-</div>
+</h3>
 <p>
 You can add any name/value settings to each route entry to adjust it's behavior.
 By default the framework supports <code>require_secure</code> and
@@ -141,9 +145,10 @@ The <code>require_secure</code> configuration directive supports 3 values:
 The framework will automatically redirect if it detects it is in the "wrong" security mode. Note that POST information is not preserved.
 </p>
 
-<div class="section_title">
+<br />
+<h3>
 Re-routing
-</div>
+</h3>
 <p>
 Since one route can initiate loading of another, this allows almost any route to be loaded under any URL.
 This largely obviates the need for performing redirects, which can be expensive and complicated when form POSTs are involved.
@@ -162,9 +167,10 @@ The database section is configured to require login as an example of how to impl
 </p>
 
 
-<div class="section_title">
+<br />
+<h3>
 Also Known As / A.K.A. Aliasing
-</div>
+</h3>
 <p>
 If the same page needs be loaded under different "names", whether for backwards compatibility or SEO reasons, an alias can be set. 
 For example, this page can also be loaded under <a href="?page=conf">?page=conf</a> or <a href="?page=ini">?page=ini</a>.
@@ -181,9 +187,10 @@ Core::$routes['akafoo']	= &Core::$routes['configuration'];
 
 </p>
 
-<div class="section_title">
+<br />
+<h3>
 Introspection
-</div>
+</h3>
 <p>
 Since the primary settings for what is run is in a single array, it is easy to perform introspection to review the settings.
 Introspection is used by most routes to determine what template file to load with the route. 
@@ -199,12 +206,13 @@ $template = Config::$routes[Core::$current_route]['template'];
 <p>
 Below is a list of all the primary routes that are currently defined, and can be run. 
 
-<div class="subsection_title">
+<br />
+<h3>
 Primary Routes List (<?php echo count($this->routes);?>)
-</div>
+</h3>
 
 <div>
-<table class="table table-striped table-condensed">
+<table class="table table-striped table-bordered">
 <th>Route</th>
 <th>Data Only</th>
 <th>HTTPS</th>
@@ -212,7 +220,7 @@ Primary Routes List (<?php echo count($this->routes);?>)
 </tr>
 <?php
 foreach($this->routes as $params) {
-	echo '<tr><td><strong>'.$params['name'].'</strong></td>';
+	echo '<tr><td>'.$params['name'].'</td>';
 	echo '<td>'.$params['data_only'].'</td>';
 	echo '<td>'.$params['require_secure'].'</td>';
 	echo '<td>'.$params['require_login'].'</td></tr>';
