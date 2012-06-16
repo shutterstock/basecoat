@@ -23,7 +23,7 @@ Config::$route_param		= 'page';
 Content::$page->add('sitename', 'Basecoat');
 Content::$page->add('title',Content::$page->sitename . ': ');
 Content::$page->add('lang', 'en', false);
-
+Content::$messages->setTemplate(BC_TEMPLATES . "common/messages.tpl.php");
 
 /*
  -- Configure default template includes --

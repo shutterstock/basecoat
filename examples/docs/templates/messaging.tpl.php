@@ -1,6 +1,7 @@
-<div class="section_title">
+<br />
+<h2>
 Messaging
-</div>
+</h2>
 <p>
 <?php echo Content::$page->sitename;?> comes with a basic user message display system that includes 3 display types: info, warn and error.
 The Messages class is part of the Content class and registers the instance of itself in the <code>Content::$messages</code> variable.

@@ -1,8 +1,7 @@
 @page_header>
 <div class="header">
 
-<div class="header_title">
-<strong><?php echo Content::$page->sitename;?> Framework</strong>
-</div>
-
+<header class="">
+<h1 style="font-size:60px; margin:50px 0px;"><?php echo Content::$page->sitename;?> Framework</h1>
+</header>
 </div>
