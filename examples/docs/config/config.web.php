@@ -24,7 +24,6 @@ Content::$page->add('sitename', 'Basecoat');
 Content::$page->add('title',Content::$page->sitename . ': ');
 Content::$page->add('lang', 'en', false);
 
-
 /*
  -- Configure default template includes --
  These will be automatically used for each page
