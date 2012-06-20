@@ -41,7 +41,7 @@ An example of a layout file:
 echo str_replace(array('<','>'), array('&lt;', '&gt;'), <<<TEXT
 <html lang="<?php echo \$this->lang; ?>">
 <head>
-<title><?php echo $this->title; ?></title>
+<title><?php echo \$this->title; ?></title>
 <?php echo \$this->head; ?>;
 
 <style type="text/css">

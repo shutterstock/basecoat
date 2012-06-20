@@ -36,6 +36,10 @@ if ( is_null(Config::$run_mode) ) {
 	if ( 'cli'==php_sapi_name() ) {
 		// If in command line mode, return control to calling script
 		Config::$run_mode		= 'cli';
+		// Check for a cli config file
+		if ( defined('BC_CONFIGS') && file_exists(BC_CONFIGS . 'config.cli.php') ) {
+			include_once(BC_CONFIGS . 'config.cli.php');
+		}
 		return;
 	}
 	Config::$run_mode	= 'web';

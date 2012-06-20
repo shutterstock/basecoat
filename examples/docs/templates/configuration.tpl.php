@@ -8,19 +8,33 @@ and then other configuration files are loaded as needed,
 based on a defined inheritance hierarchy and what is requested.
 </p>
 <p>
-Before initializing the framework, certain directories need to be defined in constants so the framework knows where to look for the required files.
+Before initializing the framework, certain paths need to be defined in constants so the framework knows where to look for the required files.
 By configuring specific locations, the overhead of checking multiple include directories is avoided.
 These directories contain the files you create, external to the framework, that the framework loads and processes.
-These files include routes, templates and layouts.
-Before loading <code>init.php</code>, define the following constants:
-</p><p>
+These files include configuration files, routes, templates and layouts.
+<br />
+<strong>Before loading <code>init.php</code>, define the following constants:</strong>
+<br />
 <ul>
 <li>BC_CONFIGS - configuration directory</li>
 <li>BC_ROUTES - files that map to specific URL requests</li>
 <li>BC_TEMPLATES - template files used by routes to merge data with for output</li>
 <li>BC_LAYOUTS - common page layouts that templates are merge with for output</li>
 </ul>
-</p><p>
+</p>
+<p>
+<strong>Optional directives to include in the <code>config.php</code> file:</strong>
+<br />
+<ul>
+<li>Config::$debug - true/<strong>false</strong></li>
+<li>Config::$run_mode - <strong>prod</strong>/dev</li>
+<li>Config::$run_env - web/cli automatically determined by init.php</li>
+<li>Config::$use_pretty_urls - true/<strong>false</strong></li>
+<li>Config::$route_param - page, can be set to anything</li>
+<li>Core::$profiling_enabled - true/<strong>false</strong></li>
+</ul>
+
+<p>
 Below is a typical example of how to define the required constants for <?php echo Content::$page->sitename;?> to use.
 This configuration is valid for the directory structure example from the Home page documentation, and would typically be place in your site index file.
 </p><p>
@@ -33,7 +47,7 @@ define('BC_ROUTES', SITE_DIR . 'routes/');
 define('BC_TEMPLATES', SITE_DIR . 'templates/');
 define('BC_LAYOUTS', BC_TEMPLATES . 'layouts/');
 
-// Load core initialization
+// Load core initialization from the Basecoat Framework directory
 include_once( '../../../basecoat/init.php');
 </pre>
 </p>
@@ -47,6 +61,7 @@ Configuration Files
 <p>
 A fully configured <?php echo Content::$page->sitename;?> installation requires a total of 2 configuration files.
 One file is the base configuration (config.php) and the other is the web specific configuration (config.web.php).
+Optionally you can also create a config.cli.php file that will be included automatically if in command line mode (i.e. backend scripts).
 </p>
 
 <br />
@@ -126,9 +141,9 @@ This allows development using URL parameters and production using URL rewrite ru
 </p>
 <p>
 <br />
-<h3>
+<h4>
 Parameter Based URLs
-</h3>
+</h4>
 The default URL parameter that specifies the routes is called "page". 
 This is configureable in <code>config.web.php</code> by the variable <code>Config::$route_param</code>.
 Multiple routes/subroutes can be specified by separating the route names with periods.
@@ -141,9 +156,9 @@ http://hostname.com/?page=configuration.settings
 
 <p>
 <br />
-<h3>
+<h4>
 Rewrite Based URLs
-</h3>
+</h4>
 To specify the same configuration route and settings subroute, use the / character in the URL.
 <br />
 For example:
@@ -152,9 +167,9 @@ http://hostname.com/configuration/settings
 </pre>
 </p>
 <br />
-<h3>
+<h4>
 URL Mapping
-</h3>
+</h4>
 <p>
 Once the URL is parsed, and the requested route is determined, the route list is checked. 
 If there is no matching route found, the /templates/static directory will be checked for a matching file.
@@ -167,6 +182,15 @@ for creating basic, static html pages without granting access to code and possib
 All of the code for parsing the URL and setting up the routes is contained in the <code>url_parser.php</code> file.
 If you require your own special URL setup, you can modify it, or load your own file, to fit your needs without having to
 make extensive changes to the framework code.
+<br />
+<strong>Variables available after parsing:</strong>
+<br />
+<ul>
+<li>Core::$run_routes - list of routes to run</li>
+<li>Core::$current_route - current/first route being run, changes as routes are processed</li>
+<li>Core::$requested_route - original/first route requested to be run</li>
+</ul>
+
 </p>
 
 <br />
@@ -178,9 +202,9 @@ There are 3 processing hooks available for including files at various points of 
 Hooks are available for before routes are run, templates to include after all routes are run, and after page output.
 </p>
 <br />
-<h3>
+<h4>
 Config::$include_before
-</h3>
+</h4>
 <p>
 This array contains a list of files that should be included before any routes are run.
 Typically some logic would be placed in the config.web.php file to determine what additional files should be included.
@@ -188,9 +212,9 @@ For example, if running and A/B test, a user's bucket can be determined the appr
 </p>
 
 <br />
-<h3>
+<h4>
 Config::$include_before
-</h3>
+</h4>
 <p>
 Template files to load after all routes have been run.
 Typically these will be common header, footer, navigation, etc.
@@ -198,15 +222,12 @@ Routes can modified and/or override this list to alter final output.
 </p>
 
 <br />
-<h3>
+<h4>
 Config::$include_after_output
-</h3>
+</h4>
 <p>
 This array contains a list of files that should be included after page output.
 Since the page output has been completely, this can be longer running processes that would normal delay page delivery.
 Typically and logging would be registered to occur here.
 </p>
-<br />
-<br />
-<br />
 <br />

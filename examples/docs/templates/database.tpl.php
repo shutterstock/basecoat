@@ -214,6 +214,13 @@ array(
 </pre>
 </p>
 
+<p>
+<strong>fetchField( $fieldName, $useMaster=false )</strong>
+<br />
+Sometimes you just need to get a list of values from the database and field names are not necessary.
+The <code>fetchField</code> function will retrieve the values of the field specified and return a single dimensional array.
+</p>
+
 <br />
 <h3>
 INSERT
@@ -263,16 +270,19 @@ Returns the auto increment value of the last inserted record.
 UPDATE
 </h3>
 <p>
-The <code>update</code> function is very similar to the <code>insert</code> function, except that it includes a filter for a parameter.
-
+The <code>update</code> function is very similar to the <code>insert</code> function, except that it includes 2 extra filter parameters. The <code>$filter</code> parameter is any valid SQL clause. Optionally, a name/value array can also be passed as <code>$filterBindings</code> to be merged with the <code>$filter</code>.
+<p>
+<strong>update( $tablename, $data, $filter, $filterBindings=null, $useMaster=true )</strong>
+</p>
 
 
 <br />
 <h3>
-Special Inserts
+Prepare/Excute and Special Inserts
 </h3>
 <p>
-Sometimes there is a need to perform an insert with formulas and/or special functions (i.e. NOW(), field+1). In cases like these, a name/value data pairing will not work. The prepare/execute combination should be used when you need to do special inserts like these. This still permits using the PDO bindings for escaping the data.
+Sometimes there is a need to perform an insert with formulas and/or special functions (i.e. NOW(), field+1). In cases like these, a name/value data pairing will not work. The prepare/execute combination should be used when you need to do special inserts and/or queries like these. This still permits using the PDO bindings for escaping the data.
+Any type of complex queries (i.e. INSERT...SELECT) that do not fit the standard query types should use the prepare/execute combination.
 Note: You must specify to use the master connection for both prepare and execute, both functions default to using the slave connection.
 
 <pre>
@@ -287,6 +297,35 @@ if ( $presult==1 ) {
 
 </p>
 <br />
-<br />
-<br />
-<br />
+
+<h3>
+DELETE
+</h3>
+<p>Documentation To Do</p>
+
+<h3>
+Error Messages
+</h3>
+<p>
+Documentation To Do
+<p>
+<strong>$errorCode</strong>
+</p>
+<p>
+<strong>$errorMsg</strong>
+</p>
+<p>
+<strong>DB::$errors</strong>
+</p>
+
+<h3>
+Profiling
+</h3>
+<p>Documentation To Do</p>
+<p>
+<strong>getProfiling()</strong>
+</p>
+
+
+
+
