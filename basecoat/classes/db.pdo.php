@@ -744,7 +744,7 @@ class DB {
 	 * @param constant $method	PDO method to use for fetch records (default is PDO::FETCH_ASSOC)
 	 * @return int	1 if successful, -1 if error. Fetched data is stored in $selectResult class variable by default
 	 */
-	public function fetchAll( &$resultVar, $keyField=null, $grouped=false, $userMaster=false, $method=null )
+	public function fetchAll( &$resultVar, $keyField=null, $grouped=false, $useMaster=false, $method=null )
 	{
 		if ( $useMaster ) {
 			$sth		=& self::$msth;
