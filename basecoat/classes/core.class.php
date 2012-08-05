@@ -51,6 +51,22 @@ class Config {
 	public static $route_param	= 'page';
 	
 	/**
+	* Headers to include in the output
+	*/
+	public static $headers		= array(
+		'Content-type'=>'text/html; charset=UTF-8',
+		'X-Powered-By'=>'Basecoat PHP framework'
+		);
+	
+	/**
+	* Content data
+	*/
+	public static $content		= array(
+		'charset'	=> 'UTF-8',
+		'lang'		=> 'en'
+		);
+	
+	/**
 	* URL to evaluate for routing
 	*/
 	public static $url			= null;
@@ -74,6 +90,12 @@ class Config {
 	* Array to contain route definitions
 	*/
 	public static $routes	= array();
+	
+	/**
+	* Maximum number of routes to run
+	* Used to prevent circular routing when chaining routes
+	*/
+	public static $max_routes	= 5;
 	
 	/**
 	* Array to contain list of available layouts
@@ -115,7 +137,7 @@ class Core {
 	static public $page_wrapup	= array();
 		
 	/**
-	* stdClass obejct to hold instances of base classes
+	* stdClass object to hold instances of base classes
 	*/
 	static public $bc			= null;
 	

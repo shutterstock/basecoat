@@ -1,4 +1,3 @@
-<?php header('Content-Type: text/html; charset=utf-8'); ?>
 <!DOCTYPE HTML">
 <html lang="<?php echo $this->lang; ?>" xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="https://www.facebook.com/2008/fbml">
 <head>

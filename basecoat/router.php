@@ -40,6 +40,28 @@ if ( count(Config::$include_before)>0 ) {
 	}
 }
 
+// Set default headers
+foreach(Config::$headers as $header=>$val) {
+	header($header.': '.$val);
+}
+
+// Check if initial route is cacheable
+if ( isset(Config::$routes[Core::$current_route]['cacheable']) ) {
+	$is_cacheable	= Config::$routes[Core::$current_route]['cacheable'];
+	// Check for expires
+	if ( isset($is_cacheable['expires']) ) {
+		// Add expires header Fri, 30 Oct 1998 14:19:41 GMT
+		header("Pragma: cache", true);
+		header('Expires: '. gmdate('D, d M Y H:i:s', strtotime('+'.$is_cacheable['expires'])).' GMT', true);
+		header('Cache-Control: public, max-age='.(strtotime('+'.$is_cacheable['expires'])-time()), true);
+		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+	}
+	// Check if a server side cache should be created/returned
+	if ( isset($is_cacheable['server']) ) {
+		//TO DO
+	}
+}
+
 do {
 	// Save current route so we can check if it changes later
 	Core::$last_run_route		= Core::$current_route;
@@ -89,7 +111,7 @@ do {
 		$route_start_time	= $route_end_time;
 	}
 	$route_loop_cntr++;
-} while (Core::$last_run_route != Core::$current_route && $route_loop_cntr<=$max_loops);
+} while (Core::$last_run_route != Core::$current_route && $route_loop_cntr<=Core::$max_routes);
 if (Core::$profiling_enabled) {
 	Core::$profiling['end']		= round(microtime(true),3);
 	Core::$profiling['files']	= $route_inc_cntr;

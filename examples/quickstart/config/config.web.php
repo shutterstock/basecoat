@@ -19,10 +19,13 @@ Config::$use_pretty_urls	= false;
 // If not using pretty URLs, what URL param contains which page to load
 Config::$route_param		= 'page';
 
+// Add content config to page
+Content::$page->add('charset', Config::$content['charset'], false);
+Content::$page->add('lang', Config::$content['lang'], false);
+
 // Set page title prefix
 Content::$page->add('sitename', 'Basecoat Quick Start');
 Content::$page->add('title', Content::$page->sitename);
-Content::$page->add('lang', 'en', false);
 
 /*
  -- Configure default template includes --
@@ -55,9 +58,15 @@ Config::$routes = array(
 	'home'	=> array(
 		'file'		=> BC_ROUTES . 'index.php',
 		'template'	=> BC_TEMPLATES . 'index.tpl.php',
+		'cacheable'	=> array(
+			'expires'=>'20 minutes',
+			)
 	),
 	'html'	=> array(
 		'file'		=> BC_ROUTES . 'static.php',
+		'cacheable'	=> array(
+			'expires'=>'1 day',
+			);
 	),
 	'not_found' => array(
 		'file'		=> BC_ROUTES . '404.php',
