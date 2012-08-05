@@ -66,7 +66,7 @@ Config::$routes = array(
 		'file'		=> BC_ROUTES . 'static.php',
 		'cacheable'	=> array(
 			'expires'=>'1 day',
-			);
+			)
 	),
 	'not_found' => array(
 		'file'		=> BC_ROUTES . '404.php',
