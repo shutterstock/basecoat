@@ -138,7 +138,8 @@ class Content {
 	* @return Integer number of content blocks discovered
 	*/
 	public function parseBlocks($tpl) {
-		$tpl_blocks	= preg_split('/^@(\\S+)>$/m', $tpl, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+		//$tpl_blocks	= preg_split('/^@(\\S+)>$/m', $tpl, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+		$tpl_blocks	= preg_split('/^@(\\S+)>[\r\n]/m', $tpl, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 		$blocks_parsed	= count($tpl_blocks);
 		if ( 1 == $blocks_parsed ) {
 			$this->addBlock($this->default_namespace, $tpl_blocks[0]);
