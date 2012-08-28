@@ -8,7 +8,9 @@
  ****************************************************/
 // Check if a URL to parse has been set
 if ( is_null(Config::$url) ) {
-	Config::$url	= $_SERVER['REQUEST_URI'];
+	// Determine the relative URL
+	$trim_chars		= strlen(dirname($_SERVER['SCRIPT_NAME']));
+	Config::$url	= substr($_SERVER['REQUEST_URI'], $trim_chars);
 }
 
 // Check what URL format is in use
