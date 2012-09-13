@@ -111,7 +111,7 @@ do {
 		$route_start_time	= $route_end_time;
 	}
 	$route_loop_cntr++;
-} while (Core::$last_run_route != Core::$current_route && $route_loop_cntr<=Core::$max_routes);
+} while (Core::$last_run_route != Core::$current_route && $route_loop_cntr<=Config::$max_routes);
 if (Core::$profiling_enabled) {
 	Core::$profiling['end']		= round(microtime(true),3);
 	Core::$profiling['files']	= $route_inc_cntr;
