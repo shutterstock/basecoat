@@ -142,9 +142,16 @@ class Core {
 	static public $bc			= null;
 	
 	/**
+	* Instance of database class
+	*/
+	static public $db			= null;
+	
+	/**
 	* Variable to hold auth class instance
 	*/
 	static public $auth			= null;
+	
+	static public $loginCheck	= null;
 
 	/**
 	* Contains profiling information for code that is run

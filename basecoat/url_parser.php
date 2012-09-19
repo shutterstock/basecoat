@@ -15,10 +15,9 @@ if ( is_null(Config::$url) ) {
 
 // Check what URL format is in use
 if ( Config::$use_pretty_urls ) {
-	if ( Config::$url=='' ) {
+	if ( Config::$url=='' || Config::$url=='/' ) {
 		//No route specified
 		Core::$run_routes		= array('default');
-
 	} else {
 		// prepend a dummy domain so parse_url works right under all circumstances
 		$url_path				= trim( parse_url('http://localhost'. Config::$url, PHP_URL_PATH), '/');
