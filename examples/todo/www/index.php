@@ -16,5 +16,9 @@ define('BC_LIB', SITE_DIR . 'lib/');
 include_once( '../../../basecoat/init.php');
 
 
-echo '<pre>'.print_r(Core::$db->getProfiling(),true).'</pre>';
+echo '<pre>
+Information retrieve from the DB class profiling function.
+What database activitiy just occurred:
+
+'.print_r(Core::$db->getProfiling(),true).'</pre>';
 

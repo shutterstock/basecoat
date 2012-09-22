@@ -1,8 +1,9 @@
 @body_top>
-<hr>
+<br/>body_top<br/>
 
 @body>
+<br/>body
 <?php echo $this->hello_world; ?>
-
+<br/>
 @body_btm>
-<hr>
+<br/>body_btm<br/>

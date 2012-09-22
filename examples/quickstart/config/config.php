@@ -10,22 +10,14 @@ date_default_timezone_set('UTC');
 // Configure database connections
 Config::$settings->db = array(
 	0 => array(
-		'host' => 'localhost', 'db' => 'default_db', 
-		'username' => 'db_user', 'password' => 'db_password', 
+		'host' => 'localhost', 'db' => 'test', 
+		'username' => 'root', 'password' => 'freeDB', 
 		'label'=>'master'),
-	1 => array(
-		'host' => 'localhost', 'db' => 'default_db', 
-		'username' => 'db_user', 'password' => 'db_password', 
-		'label'=>'slave1'),
-	2 => array(
-		'host' => 'localhost', 'db' => 'default_db', 
-		'username' => 'db_user', 'password' => 'db_password', 
-		'label'=>'slave2'),
 );
 // Specify which config is the master and which slave db server to use.
 // This example show how to use a random slave when more than one is available
 Config::$settings->dbmaster_id	= 0;
-Config::$settings->dbslave_id	= mt_rand(1,2);
+Config::$settings->dbslave_id	= 0;
 
 //
 // Once all standard configurations are set, load any overrides based on environment

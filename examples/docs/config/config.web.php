@@ -99,7 +99,7 @@ Config::$routes = array(
 	'database'	=> array(
 		'file' 		=> BC_ROUTES . 'database.php',
 		'template'	=> BC_TEMPLATES . 'database.tpl.php',
-		'require_login'	=> true,
+		'require_login'	=> false,
 	),
 	'messages'	=> array(
 		'file' 		=> BC_ROUTES . 'messages.php',

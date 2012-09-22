@@ -5,8 +5,8 @@
 </div>
 
 <a href="<?php echo Config::$settings->url_root;?>">
-<h1>SQL vs. ORM Cage Fight</h1>
+<h1>Basecoat: To Do list example</h1>
 </a>
 
-<h4>ORMs are for people with NoSQL</h4>
+<h4>Don't put off `til tomorrow what can be done today</h4>
 </div>

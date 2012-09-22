@@ -59,9 +59,6 @@ Config::$routes = array(
 	'home'	=> array(
 		'file'		=> BC_ROUTES . 'index.php',
 		'template'	=> BC_TEMPLATES . 'list.tpl.php',
-		'cacheable'	=> array(
-			'expires'=>'20 minutes',
-			)
 	),
 	'task'	=> array(
 		'file'		=> BC_ROUTES . 'task_edit.php',
@@ -81,7 +78,9 @@ Config::$routes = array(
 		'file'		=> BC_ROUTES . '404.php',
 		'template'	=> BC_TEMPLATES . '404.tpl.php',
 		'layout'	=> BC_LAYOUTS . 'basic.php',
-		'data_only'	=> 1
+		'cacheable'	=> array(
+			'expires'=>'20 minutes',
+			)
 	),
 
 );

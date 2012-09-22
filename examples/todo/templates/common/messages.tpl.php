@@ -1,5 +1,6 @@
 @messages>
 
+<div style="margin:3px">
 <?php
 
 if ( isset($this->msg_info) ) {
@@ -25,3 +26,5 @@ if ( isset($this->msg_error) ) {
 	implode("<br />\n", $this->msg_error)
 .'</div>';
 }
+?>
+</div>
