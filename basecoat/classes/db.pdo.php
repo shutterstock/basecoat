@@ -496,7 +496,7 @@ class DB {
 		}
 		if ( $result>-1 ) {
 			if ( $fetchAll ) {
-				if ( $this->fetchAll($this->selectResult) == -1 ) {
+				if ($result = $this->fetchAll($this->selectResult) == -1 ) {
 					return -1;
 				}
 			}
