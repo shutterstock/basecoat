@@ -36,6 +36,16 @@ class Content {
 	public $blocks			= array();
 	
 	/**
+	* Enable data tag search and replace
+	*/
+	public $enable_data_tags	= true;
+	
+	/**
+	* Data tag delimiters
+	*/
+	public $data_tags_delimiters	= array('prefix'=>'{{:','suffix'=>'}}');
+	
+	/**
 	* Create an instance of the Content class
 	*
 	* @return Object instance of Content class
@@ -95,6 +105,34 @@ class Content {
 	}
 	
 	/**
+	* Search and replace data tags in templates
+	* Allows usage of {{:data}} tags to output data
+	* instead of having to use <?php echo $data;?>
+	*
+	* @param String $tpl template text to search and replace data tags on
+	* @return String the processed template with data tags replaced
+	*/
+	public function replaceDataTags($tpl) {
+		if ( !$this->enable_data_tags ) { 
+			return $tpl;
+		}
+		if ( count($this->data)>0 ) {
+			// create tags
+			$makeTags	= function(&$tag, $key, $tag_wrap) {
+				$tag	= $tag_wrap['prefix'].$tag.$tag_wrap['suffix'];
+			};
+			$tag_keys	= array_keys($this->data);
+			array_walk($tag_keys, $makeTags, $this->data_tags_delimiters);
+			// search and replace data tags
+			$tpl		= str_replace($tag_keys, $this->data, $tpl);
+		}
+		// cleanup any lingering tags
+		$tpl	= preg_replace('/{{:.[^}}]+}}/', '', $tpl);
+		return $tpl;
+		
+	}
+	
+	/**
 	* Add a content block under a specify namespace
 	*
 	* @param String $block_name namespace to add content block under
@@ -123,6 +161,7 @@ class Content {
 		ob_start();
 		include($tpl);
 		$content	= ob_get_clean();
+		$content	= $this->replaceDataTags($content);
 		if ( $parse ) {
 			return $this->parseBlocks($content);
 		} else {

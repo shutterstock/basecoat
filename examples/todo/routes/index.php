@@ -13,6 +13,8 @@ $tasks		= array(
 	'todo'	=> Core::$bc->tasks->getTodo(),
 	'pastdue'	=> Core::$bc->tasks->getpastDue()
 );
+$tasks['todo_count']	= count($tasks['todo']);
+$tasks['pastdue_count']	= count($tasks['pastdue']);
 
 $content->multiadd($tasks);
 

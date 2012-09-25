@@ -6,8 +6,10 @@ if ( count($this->pastdue)>0 ) {
 	$this->tasklist			= $this->pastdue;
 	include( BC_TEMPLATES . 'common/tasklist.tpl.php');
 }
+?>
 
-echo '<h3>To Do ' . ' ('.count($this->todo).')</h3>'; 
+<h3>To Do ({{:todo_count}})</h3>
+<?php
 $this->tasklist	= $this->todo;
 
 include( BC_TEMPLATES . 'common/tasklist.tpl.php');
