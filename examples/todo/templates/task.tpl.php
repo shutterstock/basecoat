@@ -1,9 +1,10 @@
+<br />
 
 <form method="post" action="">
 <input type="hidden" name="task_id" value="<?php echo $this->task_id; ?>" />
 
 <label for="f_task">Task</label>
-<input type="text" name="task_data[task]" id="f_task" value="<?php echo htmlentities($this->task); ?>" size="50" />
+<input type="text" name="task_data[task]" id="f_task" value="<?php echo htmlentities($this->task); ?>" class="span4" />
 <select name="task_data[status_id]" class="span2">
 <?php
 foreach($this->status_opts as $opt) {
@@ -19,7 +20,7 @@ foreach($this->status_opts as $opt) {
 <br />
 
 <label for="f_duedate">Due Date</label>
-<input type="date" name="task_data[due_date]" id="f_duedate" value="<?php echo htmlentities($this->due_date); ?>" size="12" />
+<input type="date" name="task_data[due_date]" id="f_duedate" value="<?php echo htmlentities($this->due_date); ?>"  class="span2" />
 <br />
 
 <label for="f_category">Category</label>
@@ -38,7 +39,7 @@ foreach($this->category_opts as $opt) {
 <br />
 
 <label for="f_notes">Notes</label>
-<textarea name="task_data[description]" id="f_notes" cols="80" rows="5">
+<textarea name="task_data[description]" id="f_notes" cols="80" rows="4"  class="span5">
 <?php echo $this->description; ?>
 </textarea>
 <br />

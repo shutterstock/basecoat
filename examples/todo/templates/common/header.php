@@ -1,7 +1,15 @@
 @page_header>
+<?php
+if (Config::$use_pretty_urls) {
+	$task_url	= 'task/?id=new';
+} else {
+	$task_url	='?page=task&id=new';
+}
+?>
+
 <div class="header">
 <div style="position: fixed;top:15px;right:50px;">
-<a href="task/?id=new" class="btn btn-primary">New To Do</a>
+<a href="<?php echo $task_url;?>" class="btn btn-primary">New To Do</a>
 </div>
 
 <a href="<?php echo Config::$settings->url_root;?>">

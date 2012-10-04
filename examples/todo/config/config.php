@@ -10,8 +10,10 @@ date_default_timezone_set('UTC');
 // Configure database connections
 Config::$settings->db = array(
 	0 => array(
-		'host' => 'localhost', 'db' => 'todo', 
-		'username' => 'root', 'password' => 'freeDB', 
+		'host' => 'localhost', 
+		'db' => 'todo', 
+		'username' => 'root', 
+		'password' => 'freeDB', 
 		'label'=>'master'),
 );
 // Specify which config is the master and which slave db server to use.
