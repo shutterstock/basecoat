@@ -1,4 +1,6 @@
 <?php
+namespace Basecoat;
+
 /**
 * Configuration information, static to make it globally easily accessible
 *
@@ -7,10 +9,10 @@
 
 
 // Setup base config object to hold extra settings
-Config::$settings	= new stdClass;
+Config::$settings	= new \stdClass;
 
 // Setup base class object to hold instances of core classes
-Core::$bc			= new stdClass;
+Core::$bc			= new \stdClass;
 
 class Config {
 	/**

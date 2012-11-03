@@ -1,5 +1,5 @@
 <?php
-if (Config::$use_pretty_urls) {
+if (\Basecoat\Config::$use_pretty_urls) {
 	$task_link	= 'task/?';
 } else {
 	$task_link	= '?page=task&';

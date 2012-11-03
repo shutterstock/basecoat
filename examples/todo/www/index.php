@@ -18,7 +18,7 @@ include_once( '../../../basecoat/init.php');
 
 echo '<pre>
 Information retrieved from the DB class profiling function.
-Following is what database activitiy just occurred:
+Following is what database activity just occurred:
 
-'.print_r(Core::$db->getProfiling(),true).'</pre>';
+'.print_r(\Basecoat\Core::$db->getProfiling(),true).'</pre>';
 

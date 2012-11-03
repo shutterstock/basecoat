@@ -9,8 +9,8 @@
 <?php echo $this->head; ?>
 
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<link rel="stylesheet" type="text/css" href="<?php echo Config::$settings->url_root;?>bootstrap/css/bootstrap.min.css" />
-<script type="text/javascript" src="<?php echo Config::$settings->url_root;?>bootstrap/js/bootstrap.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo \Basecoat\Config::$settings->url_root;?>bootstrap/css/bootstrap.min.css" />
+<script type="text/javascript" src="<?php echo \Basecoat\Config::$settings->url_root;?>bootstrap/js/bootstrap.js"></script>
 
 <style type="text/css">
 body {

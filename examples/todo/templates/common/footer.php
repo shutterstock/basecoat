@@ -1,7 +1,7 @@
 @page_footer>
 
 <?php
-if (Config::$use_pretty_urls) {
+if (\Basecoat\Config::$use_pretty_urls) {
 	$bulk_url	= 'bulk/';
 } else {
 	$bulk_url	= '?page=bulk';

@@ -19,20 +19,20 @@ class Tasks {
 	
 	public function get($id) {
 		$q			= $this->base_tasks_q . ' WHERE tasks.sid= :id';
-		$qresult	= Core::$db->selectOne($q, array('id'=>$id), true);
+		$qresult	= \Basecoat\Core::$db->selectOne($q, array('id'=>$id), true);
 		if ( !is_array($qresult) && $qresult<0 ) {
-			$this->logError($qresult.' '.Core::$db->errorMsg. ' :: '.$q);
+			$this->logError($qresult.' '.\Basecoat\Core::$db->errorMsg. ' :: '.$q);
 		}
 		return $qresult;
 	}
 
 	public function save($task_data) {
-		$iresult	= Core::$db->insert('tasks', $task_data);
+		$iresult	= \Basecoat\Core::$db->insert('tasks', $task_data);
 		return $iresult;
 	}
 	
 	public function update($id, $task_data) {
-		$uresult	= Core::$db->update('tasks', $task_data, 'sid=:id', array('id'=>$id));
+		$uresult	= \Basecoat\Core::$db->update('tasks', $task_data, 'sid=:id', array('id'=>$id));
 		return $uresult;
 	}
 	
@@ -42,12 +42,12 @@ class Tasks {
 			// Load options
 			$q	= 'SELECT * FROM status ORDER BY order_by';
 			// Run query and retrieve records (query, bindings, useMaster, fetchAll)
-			$qresult	= Core::$db->select($q, null, false, true);
+			$qresult	= \Basecoat\Core::$db->select($q, null, false, true);
 			if ( $qresult>=0 ) {
-				self::$status_opts	= Core::$db->selectResult;
+				self::$status_opts	= \Basecoat\Core::$db->selectResult;
 			} else {
 				// Something went wrong
-				$this->logError($qresult.' '.Core::$db->errorMsg. ' :: '.$q);
+				$this->logError($qresult.' '.\Basecoat\Core::$db->errorMsg. ' :: '.$q);
 				return $qresult;
 			}
 		}
@@ -59,12 +59,12 @@ class Tasks {
 		if ( !is_array(self::$category_opts) ) {
 			$q	= 'SELECT * FROM categories ORDER BY category';
 			// Run query and retrieve records (query, bindings, useMaster, fetchAll)
-			$qresult	= Core::$db->select($q, null, false, true);
+			$qresult	= \Basecoat\Core::$db->select($q, null, false, true);
 			if ( $qresult>=0 ) {
-				self::$category_opts	= Core::$db->selectResult;
+				self::$category_opts	= \Basecoat\Core::$db->selectResult;
 			} else {
 				// Something went wrong
-				$this->logError($qresult.' '.Core::$db->errorMsg. ' :: '.$q);
+				$this->logError($qresult.' '.\Basecoat\Core::$db->errorMsg. ' :: '.$q);
 				return $qresult;
 			}
 		}
@@ -82,13 +82,13 @@ class Tasks {
 		}
 		$from_date		= date('Y-m-d', $from_date );
 		$q				= $this->base_tasks_q . 'WHERE due_date >= :from AND status_id= :status_id ORDER BY '.$order_by;
-		$qresult		= Core::$db->select($q, array('from'=>$from_date, 'status_id'=>$this->todo_status_id));
+		$qresult		= \Basecoat\Core::$db->select($q, array('from'=>$from_date, 'status_id'=>$this->todo_status_id));
 		if ( $qresult<0 ) {
 			// Something went wrong
-			$this->logError($qresult.' '.Core::$db->errorMsg. ' :: '.$q);
+			$this->logError($qresult.' '.\Basecoat\Core::$db->errorMsg. ' :: '.$q);
 			return $qresult;
 		}
-		Core::$db->fetchAll($tasks);
+		\Basecoat\Core::$db->fetchAll($tasks);
 		return $tasks;
 	}
 	
@@ -103,13 +103,13 @@ class Tasks {
 		}
 		$from_date		= date('Y-m-d', $from_date );
 		$q				= $this->base_tasks_q . 'WHERE due_date <= :from AND status_id= :status_id ORDER BY '.$order_by;
-		$qresult		= Core::$db->select($q, array('from'=>$from_date, 'status_id'=>$this->todo_status_id));
+		$qresult		= \Basecoat\Core::$db->select($q, array('from'=>$from_date, 'status_id'=>$this->todo_status_id));
 		if ( $qresult<0 ) {
 			// Something went wrong
-			$this->logError($qresult.' '.Core::$db->errorMsg. ' :: '.$q);
+			$this->logError($qresult.' '.\Basecoat\Core::$db->errorMsg. ' :: '.$q);
 			return $qresult;
 		}
-		Core::$db->fetchAll($tasks);
+		\Basecoat\Core::$db->fetchAll($tasks);
 		return $tasks;
 		
 	}

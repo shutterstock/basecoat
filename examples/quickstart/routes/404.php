@@ -1,12 +1,13 @@
 <?php
-Content::$page->add('title','404: Not Found');
+
+$basecoat->view->add('title','404: Not Found');
 header('HTTP/1.0 404 Not Found');
 
-$content	= new Content();
-$content->add('requested_page', Core::$requested_route);
+$content	= $basecoat->view->newView();
+$content->add('requested_page', $this->requested_route);
 
 // Add route content to page
-$content->processTemplate(Config::$routes[Core::$current_route]['template']);
-$content->addToPage();
+$content->processTemplate($basecoat->view->templates_path . $this->current['template']);
+$content->addToView($basecoat->view);
 unset($content);
 

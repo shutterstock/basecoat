@@ -1,24 +1,20 @@
 <?php
+namespace Basecoat;
+
 /**
 * Provides template processing functionality
 *
 * @author Brent Baisley <brent@bigstockphoto.com>
 */
-class Content {
+class View {
 	/**
 	* Layout template to use
 	*/
-	public static $layout	= null;
+	public $layouts	= array();
+	public $layout	= null;
+	public $default_layout	= null;
 	
-	/**
-	* Default instance of Content class for final output
-	*/
-	public static $page		= null;
-	
-	/**
-	* Default instance of Messages class
-	*/
-	public static $messages	= null;
+	public $templates_path	= null;
 	
 	/**
 	* Namespace to place content in if none is specified
@@ -29,6 +25,14 @@ class Content {
 	* Name/value pairing of data tags available to templates
 	*/
 	public $data			= array();
+	
+	/**
+	* Regular expression to use to parse out block tags
+	* Default block tag structure is:
+	*   @block_name
+	*
+	*/
+	public $block_tag_regex	= '/^@(\\S+)>[\r\n]/m';
 	
 	/**
 	* Content "blocks" in template files
@@ -53,6 +57,25 @@ class Content {
 	public function __construct() {
 	}
 	
+	public function setLayouts($layouts, $default=null) {
+		$this->layouts	= $layouts;
+	}
+	
+	public function setLayout($layout_name) {
+		$this->layout	= $layout_name;
+	}
+	
+	public function getLayout($layout_name=null) {
+		if (is_null($layout_name)) {
+			$layout_name	= $this->layout;
+		}
+		return $this->layouts[$layout_name];
+	}
+	
+	public function setTemplatesPath($path) {
+		$this->templates_path	= $path;
+	}
+	
 	/**
 	* Getter method for returning a data item
 	*
@@ -72,6 +95,10 @@ class Content {
 	*/
 	public function __toString() {
 		echo implode("\n", $this->data);
+	}
+	
+	public function newView() {
+		return new View();
 	}
 	
 	/**
@@ -155,6 +182,9 @@ class Content {
 	* @return String the processed template or the number of content blocks parsed
 	*/
 	public function processTemplate($tpl, $parse=true) {
+		if ( file_exists($this->templates_path . $tpl) ) {
+			$tpl	= $this->templates_path . $tpl;
+		}
 		if ( !file_exists($tpl) ) {
 			return -1;
 		}
@@ -178,7 +208,7 @@ class Content {
 	*/
 	public function parseBlocks($tpl) {
 		//$tpl_blocks	= preg_split('/^@(\\S+)>$/m', $tpl, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-		$tpl_blocks	= preg_split('/^@(\\S+)>[\r\n]/m', $tpl, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+		$tpl_blocks		= preg_split($this->block_tag_regex, $tpl, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 		$blocks_parsed	= count($tpl_blocks);
 		if ( 1 == $blocks_parsed ) {
 			$this->addBlock($this->default_namespace, $tpl_blocks[0]);
@@ -234,8 +264,8 @@ class Content {
 	*
 	* @return Integer number of content blocks merged
 	*/
-	public function addToPage() {
-		self::$page->multiadd($this->blocks);
+	public function addToView($view) {
+		$view->multiadd($this->blocks);
 		return count($this->blocks);
 	}
 	
@@ -252,12 +282,15 @@ class Messages {
 	*/
 	protected $tpl_file	= null;
 	
+	private $parent_view = null;
+	
 	/**
 	* Create an instance of the Message class
 	*
 	* @return Object instance of Message class
 	*/
-	public function __construct() {
+	public function __construct($parent_view) {
+		$this->parent_view	= $parent_view;
 	}
 	
 	/**
@@ -347,10 +380,11 @@ class Messages {
 			$msg_count	+=count($msgs);
 		}
 		if ( $msg_count>0 ) {
-			$content	= new Content();
+			$content	= new View();
+			$content->enable_data_tags	= false;
 			$content->multiadd($_SESSION['messages'], 'msg_');
 			$msg_out	= $content->processTemplate($this->tpl_file);
-			$content->addToPage();
+			$content->addToView($this->parent_view);
 			if ( $clear ) {
 				$this->clear();
 			}

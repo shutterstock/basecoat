@@ -1,6 +1,6 @@
 <?php
 // Set template for displaying messages
-Content::$messages->setTemplate(BC_TEMPLATES . 'common/messages.tpl.php');
+\Basecoat\Content::$messages->setTemplate(BC_TEMPLATES . 'common/messages.tpl.php');
 
 
 // Configure what type of URL format is in use
@@ -14,19 +14,19 @@ RewriteRule ^(css|img|js|files)($|/) - [L]
 RewriteRule ^(.*)$ index.php [QSA,L]
 
 */
-Config::$use_pretty_urls	= true;
+\Basecoat\Config::$use_pretty_urls	= true;
 
 // If not using pretty URLs, what URL param contains which page to load
-Config::$route_param		= 'page';
-Config::$settings->url_root	= substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], 'index.php'));
+\Basecoat\Config::$route_param		= 'page';
+\Basecoat\Config::$settings->url_root	= substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], 'index.php'));
 
 // Add content config to page
-Content::$page->add('charset', Config::$content['charset'], false);
-Content::$page->add('lang', Config::$content['lang'], false);
+\Basecoat\Content::$page->add('charset', \Basecoat\Config::$content['charset'], false);
+\Basecoat\Content::$page->add('lang', \Basecoat\Config::$content['lang'], false);
 
 // Set page title prefix
-Content::$page->add('sitename', 'Basecoat Quick Start');
-Content::$page->add('title', Content::$page->sitename);
+\Basecoat\Content::$page->add('sitename', 'Basecoat Quick Start');
+\Basecoat\Content::$page->add('title', \Basecoat\Content::$page->sitename);
 
 /*
  -- Configure default template includes --
@@ -37,7 +37,7 @@ Content::$page->add('title', Content::$page->sitename);
  typically common page elements like header & footer
 */
 
-Config::$include_after	= array(
+\Basecoat\Config::$include_after	= array(
 	'page_header'	=> BC_TEMPLATES . 'common/header.php',
 	'page_footer'	=> BC_TEMPLATES . 'common/footer.php',
 );
@@ -45,17 +45,17 @@ Config::$include_after	= array(
 /******************************************************************************
  * Layouts - Containers for the templates
  *****************************************************************************/
-Config::$layouts = array(
+\Basecoat\Config::$layouts = array(
 	'basic'		=> BC_LAYOUTS . 'basic.php',
 );
 // layout aliases
-Config::$layouts['default'] = &Config::$layouts['basic'];
+\Basecoat\Config::$layouts['default'] = &\Basecoat\Config::$layouts['basic'];
 
 /******************************************************************************
  * Routes
  *****************************************************************************/
 // Fluid layout adjustments are made in the bootstrap_web.php
-Config::$routes = array(
+\Basecoat\Config::$routes = array(
 	'home'	=> array(
 		'file'		=> BC_ROUTES . 'index.php',
 		'template'	=> BC_TEMPLATES . 'list.tpl.php',
@@ -85,8 +85,8 @@ Config::$routes = array(
 
 );
 // Declare route aliases
-Config::$routes['default']	= &Config::$routes['home'];
-Config::$routes['index']	= &Config::$routes['home'];
+\Basecoat\Config::$routes['default']	= &\Basecoat\Config::$routes['home'];
+\Basecoat\Config::$routes['index']	= &\Basecoat\Config::$routes['home'];
 
 //
 // Initialize the session

@@ -1,6 +1,6 @@
 @page_header>
 <?php
-if (Config::$use_pretty_urls) {
+if (\Basecoat\Config::$use_pretty_urls) {
 	$task_url	= 'task/?id=new';
 } else {
 	$task_url	='?page=task&id=new';
@@ -12,7 +12,7 @@ if (Config::$use_pretty_urls) {
 <a href="<?php echo $task_url;?>" class="btn btn-primary">New To Do</a>
 </div>
 
-<a href="<?php echo Config::$settings->url_root;?>">
+<a href="<?php echo \Basecoat\Config::$settings->url_root;?>">
 <h1>Basecoat: To Do list example</h1>
 </a>
 

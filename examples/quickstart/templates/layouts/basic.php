@@ -8,14 +8,22 @@
 html,body {
 font-family: Arial, Helvetica, sans-serif;
 }
+body {
+	border: 1px solid #c0c0c0;
+}
+legend {
+	background-color: #606060;
+	color: #f0f0f0;
+	font-size: 10px;
+	font-weight: bold;
+	padding: 2px 5px;
+}
+.section {
+	border: 1px solid #c0c0c0;
+	margin:2px;
+}
 .content {
-border: 2px solid #f0f0f0;padding:20px 10px;
-}
-.footer, .header {
-clear:both;background-color:#f0f0f0;padding:5px;
-}
-.footer {
-font-size:11px;text-align:center;
+	padding: 5px;
 }
 <?php echo $this->css; ?>
 
@@ -28,6 +36,9 @@ font-size:11px;text-align:center;
 
 </head>
 <body class="container">
+<legend><?php echo basename(__FILE__);?> layout</legend>
+<div class="content">
+
 <?php echo $this->page_header; ?>
 
 <div class="content">
@@ -40,6 +51,8 @@ font-size:11px;text-align:center;
 <?php echo $this->body_btm; ?>
 </div>
 <?php echo $this->page_footer; ?>
+
+</div>
 
 </body>
 </html>
