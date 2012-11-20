@@ -7,7 +7,7 @@ require_once("{$basecoat_dir}classes/routing.class.php");
 require_once("{$basecoat_dir}classes/content.class.php");
 
 class Basecoat {
-	public $config = null;
+//	public $config = null;
 	
 	// Class holders
 	public $routing = null;
@@ -21,19 +21,17 @@ class Basecoat {
 	
 	public $db	= null;
 	
-	public $layouts = array();
+	//public $layouts = array();
 	
-	public $templates_path	= null;
+	//public $templates_path	= null;
+	
+	public $content	= null;
 	
 	public $hooks	= array(
-		'beforeOut'	=> array(),
-		'afterOut'	=> array()
+		'beforeRender'	=> array(),
+		'afterRender'	=> array()
 	);
 	
-	public $use_pretty_urls	= true;
-	
-	public $route_param	= 'page';
-
 	/**
 	* Headers to include in the output
 	*/
@@ -45,10 +43,12 @@ class Basecoat {
 	/**
 	* Content data
 	*/
+/*
 	public $content		= array(
 		'charset'	=> 'UTF-8',
 		'lang'		=> 'en'
 		);
+*/
 		
 	public function __construct() {
 		$this->routing	= new Routing($this);
@@ -62,20 +62,20 @@ class Basecoat {
 		$this->templates_path	= $path;
 	}
 
-	public function addBeforeOut($func) {
-		$this->hooks['beforeOut'][]	= $func;
+	public function addBeforeRender($func) {
+		$this->hooks['beforeRender'][]	= $func;
 	}
 	
-	public function clearBeforeOut() {
-		$this->hooks['beforeOut']	= array();
+	public function clearBeforeRender() {
+		$this->hooks['beforeRender']	= array();
 	}
 	
-	public function addAfterOut($func) {
-		$this->hooks['afterOut'][]	= $func;		
+	public function addAfterRender($func) {
+		$this->hooks['afterRender'][]	= $func;		
 	}
 
-	public function clearAfterOut() {
-		$this->hooks['afterOut']	= array();
+	public function clearAfterRender() {
+		$this->hooks['afterRender']	= array();
 	}
 	
 	public function loadDb($settings, $master_id, $slave_id) {
@@ -88,7 +88,7 @@ class Basecoat {
 		$route_name	= $this->routing->parseUrl($url);
 		$this->routing->run($route_name);
 		$this->messages->display();
-		$this->out();
+		return $this->render();
 	}
 	
 	public function setCacheHeaders($expires) {
@@ -110,11 +110,12 @@ class Basecoat {
 	}
 	
 		
-	public function out() {
-		$this->processHooks($this->hooks['beforeOut']);
+	public function render() {
+		$this->processHooks($this->hooks['beforeRender']);
 		$this->sendHeaders();
-		echo $this->view->processTemplate($this->view->getLayout(), false);
-		$this->processHooks($this->hooks['afterOut']);
+		$this->content	= $this->view->processTemplate($this->view->getLayout(), false);
+		$this->processHooks($this->hooks['afterRender']);
+		return $this->content;
 	}
 	
 	public function processHooks($hook) {

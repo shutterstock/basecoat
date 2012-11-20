@@ -1,7 +1,8 @@
 <?php
-Content::$page->add('title','Routing');
+$basecoat->view->add('title','Routing');
 
-$content	= new Content();
+$content	= $basecoat->view->newView();
+$content->enable_data_tags	= false;
 
 // Get List of Configured Routes
 $display_route_params	= array(
@@ -10,9 +11,9 @@ $display_route_params	= array(
 	'data_only'
 	);
 
-ksort(Config::$routes);
+ksort($basecoat->routing->routes);
 $configured_routes		= array();
-foreach(Config::$routes as $route=>$settings) {
+foreach($basecoat->routing->routes as $route=>$settings) {
 	$tmp				= array('name'=>$route);
 	foreach($display_route_params as $param) {
 		$tmp[$param]	= (isset($settings[$param]) ? $settings[$param] : '-' );
@@ -23,6 +24,7 @@ foreach(Config::$routes as $route=>$settings) {
 $content->add('routes', $configured_routes );
 
 // Add route content to page
-$content->processTemplate(Config::$routes[Core::$current_route]['template']);
-$content->addToPage();
+$content->processTemplate($basecoat->view->templates_path . $basecoat->routing->current['template']);
+$content->addToView($basecoat->view);
+
 unset($content);

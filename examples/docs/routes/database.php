@@ -1,10 +1,11 @@
 <?php
-Content::$page->add('title','Database');
 
-$content		= new Content();
+$basecoat->view->add('title','Database');
 
-$content->processTemplate(Config::$routes[Core::$current_route]['template']);
+$content	= $basecoat->view->newView();
 
 // Add route content to page
-$content->addToPage();
+$content->processTemplate($basecoat->view->templates_path . $basecoat->routing->current['template']);
+$content->addToView($basecoat->view);
+
 unset($content);

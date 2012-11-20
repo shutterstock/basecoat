@@ -83,14 +83,14 @@ $routes = array(
 );
 $bc->routing->setRoutes($routes);
 
-$bc->processRequest();
+echo $bc->processRequest();
 
 /*
 // processRequest makes the following calls:
 $route_name = $bc->routing->parseUrl();
 $bc->routing->run($route_name);
 $bc->messages->display();
-$bc->out();
+echo $bc->render();
 */
 
 

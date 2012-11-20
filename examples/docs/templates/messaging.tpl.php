@@ -3,18 +3,20 @@
 Messaging
 </h2>
 <p>
-<?php echo Content::$page->sitename;?> comes with a basic user message display system that includes 3 display types: info, warn and error.
-The Messages class is part of the Content class and registers the instance of itself in the <code>Content::$messages</code> variable.
-<?php echo Content::$page->sitename;?> comes with a message template that is used by default and is in templates/messages.tpl.php.
+{{:sitename}} comes with a basic user message display system that includes 3 display types: info, warn and error.
+The <code>Messages</code> class is part of the <code>Content</code> class. 
+An instance of the messages class is automatically created when {{:sitename}} is instantiated and can be referenced like <code>$basecoat->messages</code>.
+{{:sitename}} comes with a message template that is used by default and is in templates/messages.tpl.php in the {{:sitename}} template directory.
 </p>
 <p>
 Messages are stored in the session so that they are not lost if there is a page redirect.
-Any messages that have been registered will automatically be displayed on the next full page output.
+Any messages that have been registered will automatically be displayed on the next normal full page render via the <code>$basecoat->processRequest()</code> method.
 Messages can also be output on demand by calling the <code>display()</code> function.
-Messages set for output are stored in the content variable <code>$messages</code> and any layout set to display messages should have an output line <code>&lt;?php echo $this-&gt;messages; ?&gt;</code>.
+Any layout set to display messages should have an output line <code>&lt;?php echo $this-&gt;messages; ?&gt;</code>.
+If this code is not present anywhere messages will not be displayed and will be lost.
 </p>
 <p>
-Register a message for display is simply a matter of calling the appropriate function for the type of message to output.
+Registering a message for display is simply a matter of calling the appropriate function for the type of message to output.
 Each function can be called multiple times. Similar messages will automatically be aggregated when displayed.
 </p>
 

@@ -5,9 +5,10 @@ class Routing {
 	
 	private $basecoat	= null;
 	
-	public $settings	= array(
+	private $settings	= array(
 		'use_pretty_urls'	=> true,
 		'profiling'	=> false,
+		'route_param' => 'page'
 		);
 	
 	public $requested_url	= null;
@@ -49,6 +50,10 @@ class Routing {
 		$this->profiling['start']	= round(microtime(true),3);
 		
 		$this->setRoutes($routes);
+	}
+	
+	public function set($setting, $val) {
+		$this->settings[$setting]	= $val;
 	}
 	
 	public function addBeforeEach($func) {
@@ -163,8 +168,22 @@ class Routing {
 			}
 			// Check for function call and/or file include
 			if ( isset($this->current['function']) && is_callable($this->current['function']) ) {
-				$call_f	= $this->current['function'];
-				$call_f();
+				if ( is_callable($this->current['function']) ) {
+					$call_f	= $this->current['function'];
+					$call_f();
+					
+				} else if ( is_array($this->current['function']) ) {
+					foreach($this->current['function'] as $call_f) {
+						if ( is_callable($this->current['function']) ) {
+							$call_f();
+						} else {
+							error_log($route.' Route function not callable');
+						}
+					}
+
+				} else {
+					error_log($route.' Route function not callable');
+				}
 			}
 			if ( isset($this->current['file']) ) {
 				// Run route file
@@ -207,13 +226,13 @@ class Routing {
 			 Multiple routes are delimited by a period (.)
 			*/
 			parse_str(parse_url($url, PHP_URL_QUERY), $tmp_get);
-			if ( isset($_GET[$this->route_param]) && $_GET[$this->route_param]!='' ) {
+			if ( isset($_GET[$this->settings['route_param']]) && $_GET[$this->settings['route_param']]!='' ) {
 				// Create a run routes list, to be used by subroutes
-				$this->run_routes		= explode('.', $_GET[$this->route_param]);
+				$this->run_routes		= explode('.', $_GET[$this->settings['route_param']]);
 				
 			} else {
 				// Use default route
-				$this->run_routes		= array('default');
+				$this->run_routes		= array('/');
 			}
 		
 		}

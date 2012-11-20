@@ -3,7 +3,7 @@
 Database
 </h2>
 <p>
-<?php echo Content::$page->sitename;?> comes with a stand alone database class that uses PDO and is designed to use MySQL as the backend. 
+{{:sitename}} comes with a stand alone database class that uses PDO and is designed to use MySQL as the backend. 
 While the database class is fairly powerful, it is not designed to be an ORM and does require knowledge of SQL to use.
 The database class is designed to be a low level tool that will handle the most common tasks in a high scalability environment.
 A place where ORMs often fail. The framework does not require this class and it is included for convenience. 

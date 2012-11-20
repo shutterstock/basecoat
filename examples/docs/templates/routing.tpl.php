@@ -15,11 +15,77 @@
 }
 
 @body>
-
-<h2 class="page-header">
-Routing
+<h2>
+Overview
 </h2>
 <p>
+{{:sitename}} uses named routes and a hierarchical approach to processing routes. Rather than a full URL representing a single route, each directory in the URL is placed on a "stack" and processed as an individual route. Each route can continue processing the next item in the stack or modify the behavior based on current state. This approach is based on the concept that top level routes need to run some code common to the subroutes and can act as a gatekeeper and/or preparer. This setup also allows the registering of routes on demand. It is the job of the parent route to configure and register all the valid subroutes. 
+</p>
+<p>
+For example, if a route and it's subroutes requires a user to be logged in, the parent route can check to see if the user is logged in. If the user is not logged, route stack is modified so that the next route to load is the login route instead of the requested route(s). After all, the URL is a request not a demand. This also allows the loading of any route under any URL, largely doing away with the need for expensive redirects.
+<pre>
+// Requested URL:
+http://www.hostname.com/route/subroute1/subroute1/
+
+// Route list:
+route
+subroute1
+subroute2
+</pre>
+
+</p>
+
+<h2>
+Route Configuration
+</h2>
+<p>
+Routes are configured by declaring an associative array of named routes. The array key is the name of the route, which is used to perform an indexed lookup for the proper route to run. This provides a very fast, scalable route processing architecture. Each route has an array of configuration information associated within that is used to determine how to execute the route. Each route can have a function, an include file, or both associated with it to perform the route processing. Defined route configuration options are as follows:
+
+<ul>
+<li>function => (function) a callable function (i.e. anonymous function) to execute for processing</li>
+<li>file => (string) valid include path and file to load to process the route</li>
+<li>require_secure => (integer) automatically redirect the user to the secure version of the URL requested</li>
+<li>cacheable => (array) provides a way of declaring that a route is cacheable and how to cache.
+	<ul>
+	<li>expires => (string) a valid strtotime string indicating how long to cache the content for. Currently only adds cache headers to the output.</li>
+	</ul>
+</ul>
+
+<pre>
+$routes = array(
+	'/' => array(
+		'file' => '/path/to/route_file.php',
+		'template' => 'index_tpl.php',
+	),
+	'example' => array(
+		'file' => '/path/to/example_route.php',
+		'template' => 'route_tpl.php',
+		'require_secure' => 1,
+	),
+	'static' => array(
+		'file' => '/path/to/static_route.php',
+		'cacheable' => array(
+			'expires' => '1 hour'
+		)
+	),
+	'not_found' => array(
+		'file' => '/path/to/404_route.php',
+		'template' => '404_tpl.php',
+	),
+
+);
+</pre>
+
+The function/file configuration options essentially indicate which controller(s) to use for the route. If both are declared, both are executed with the function being run first. You can add any other route parameters that can be read and processed by your routing code. For example, adding "layout" and  "template" options to indicate which layout and template to use for output.
+</p>
+
+
+
+
+
+<br />
+<br />
+
 The entire process flow is based around the concept of routes.
 Every request that comes in is parsed to determine what route should be run.
 Each route is self contained and is typically only concerned with compiling a subset of the content to be inserted into the defined layout.

@@ -154,9 +154,15 @@ class View {
 			$tpl		= str_replace($tag_keys, $this->data, $tpl);
 		}
 		// cleanup any lingering tags
-		$tpl	= preg_replace('/{{:.[^}}]+}}/', '', $tpl);
+		//$this->stripDataTags($tpl);
+		//$tpl	= preg_replace('/{{:.[^}}]+}}/', '', $tpl);
 		return $tpl;
 		
+	}
+	
+	public function stripDataTags(&$tpl) {
+		$tpl	= preg_replace('/{{:.[^}}]+}}/', '', $tpl);
+		//return $tpl;		
 	}
 	
 	/**

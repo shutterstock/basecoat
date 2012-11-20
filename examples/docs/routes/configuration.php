@@ -1,9 +1,11 @@
 <?php
-Content::$page->add('title','Configuration');
 
-$content	= new Content();
+$basecoat->view->add('title','Configuration');
+
+$content	= $basecoat->view->newView();
 
 // Add route content to page
-$content->processTemplate(Config::$routes[Core::$current_route]['template']);
-$content->addToPage();
+$content->processTemplate($basecoat->view->templates_path . $basecoat->routing->current['template']);
+$content->addToView($basecoat->view);
+
 unset($content);

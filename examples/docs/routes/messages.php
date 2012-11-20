@@ -1,15 +1,16 @@
 <?php
 
-Content::$page->add('title','Messaging');
+$basecoat->view->add('title','Messaging');
 
-Content::$messages->info('This is an example of an information message');
-Content::$messages->warn('This is an example of an warning message');
-Content::$messages->error('This is an example of an error message');
-Content::$messages->info('Adding another informational message');
+$basecoat->messages->info('This is an example of an information message');
+$basecoat->messages->warn('This is an example of an warning message');
+$basecoat->messages->error('This is an example of an error message');
+$basecoat->messages->info('Adding another informational message');
 
-$content	= new Content();
+$content	= $basecoat->view->newView();
 
 // Add route content to page
-$content->processTemplate(Config::$routes[Core::$current_route]['template']);
-$content->addToPage();
+$content->processTemplate($basecoat->view->templates_path . $basecoat->routing->current['template']);
+$content->addToView($basecoat->view);
+
 unset($content);
