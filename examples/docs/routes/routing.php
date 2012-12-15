@@ -1,7 +1,7 @@
 <?php
 $basecoat->view->add('title','Routing');
 
-$content	= $basecoat->view->newView();
+$content = new \Basecoat\View();
 $content->enable_data_tags	= false;
 
 // Get List of Configured Routes
@@ -28,3 +28,5 @@ $content->processTemplate($basecoat->view->templates_path . $basecoat->routing->
 $content->addToView($basecoat->view);
 
 unset($content);
+
+$basecoat->routing->runNext();

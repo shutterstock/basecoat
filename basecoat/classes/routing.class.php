@@ -12,13 +12,14 @@ class Routing {
 		);
 	
 	public $requested_url	= null;
-	public $requested_path	= null;
-	
+	//public $requested_path	= null;
 	public $requested_route = null;
-	
+
+	public $run_routes = array();
+	public $running_route = null;
 	public $current = null;
 	
-	public $last = null;
+	//public $last = null;
 	
 	public $profiling = array(
 		'start'	=> null,
@@ -32,17 +33,14 @@ class Routing {
 		'after' => array()
 	);
 	
-	public $run_after = array();
-	
 	public $max_routes = 5;
 	
 	public $counter = 0;
 	
 	private $default_routes = array(
-		'default' => null,
+		'default' => '/',
 		'not_found' => 'not_found',
-		'static' => 'static',
-		'error' => null
+		'static' => 'static'
 	);
 
 	public function __construct($basecoat, $routes=null) {
@@ -110,6 +108,8 @@ class Routing {
 	public function run($route) {
 		static $route_loop_cntr	= 0;
 		$route_loop_cntr++;
+		// Set current route
+		$this->running_route = $route;
 		// Set convenience variable to reference Basecoat instance
 		$basecoat	= $this->basecoat;
 		// check if valid route is specified
@@ -205,6 +205,13 @@ class Routing {
 
 	}
 	
+	public function runNext() {
+		if ( count($this->run_routes)>0 ) {
+			$next_route = trim( array_shift($this->run_routes), '.');
+			$this->run($next_route);
+		}
+	}
+	
 	public function parseUrl($url=null) {
 		if ( is_null($url) && is_null($this->requested_url) ) {
 			$this->setUrl();
@@ -259,7 +266,7 @@ class Routing {
 		if ( $log_counter==0 ) {
 			$start_time	= $this->profiling['start'];
 		} else {
-			$start_time	= $this->profiling['routes'][$log_counter]['end'];
+			$start_time	= $this->profiling['routes'][$log_counter-1]['end'];
 		}
 		$log_counter++;
 		$end_time	= round(microtime(true),3);

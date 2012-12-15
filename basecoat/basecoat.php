@@ -58,9 +58,11 @@ class Basecoat {
 		$this->messages->setTemplate(__DIR__ . '/templates/messages.tpl.php');
 	}
 	
+/*
 	public function setTemplatesPath($path) {
 		$this->templates_path	= $path;
 	}
+*/
 
 	public function addBeforeRender($func) {
 		$this->hooks['beforeRender'][]	= $func;

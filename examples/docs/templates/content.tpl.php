@@ -1,89 +1,36 @@
+<h2>Overview</h2>
+<p>
+The content module that comes with {{:sitename}} is based around template modules and layouts that these modules are merged into. Templates and layouts use standard PHP as the templating language. Each file is "included" within a view controller so that any embedded PHP is executed, but within the view controller's context. Each template can have sections so that a single template can distribute content into multiple sections in the parent template and/or layout. This allows a single template to add content to the header, body, footer and any other section, or to be output as json, xml or any other format. Output buffering is used throughout, so there is no output until specified.
+</p>
+
 <h2>
-Content, Templates &amp; Layouts
+View Controller
 </h2>
 <p>
-Content management and output is based around layouts and templates.
-The built-in templating system uses standard PHP for building pages and outputting the result.
-Pages can be divided into as many sections on needed, and content "inserted" into each section, allowing modular, out of order building of a page.
-</p>
-<p>
-The core <code>content.class.php</code> provides a "namespaced" building environment to create output snippets and merge them into a full page. 
-There is also support for message type of info, warn, and error for output.
-The <code>init.php</code> file automatically loads and creates the "master" instance of the content class where all output eventually gets merged. 
-This instance is stored in the static variable <code>Content::$page</code>, which is part of the content class.
-Each route creates it's own instance of the content class for loading and processing templates.
-Once the route has completed processing, the content is merge into the master instance for final output by the Front Controller.
+A View Controller has no concept of a page, template or layout. It simply manages the "view" for specific content that is being created. This could be a module, a section or an entire page. Views are designed to be merged into other views in order to create a modular system of content creation. A master View instance is automatically created by {{:sitename}} and can be referenced using <code>$basecoat->view</code>. The master View is typically what would be used to merge the content blocks with a page layout for final output. Typical view processing is as follows:
+<ol>
+<li>Create a view instance
+<pre>$content = new \Basecoat\View();</pre>
+</li>
+<li>Register data to be used by the view
+<pre>$content->add('variable_name', 'data');</pre>
+</li>
+<li>Process a template with the registered data
+<pre>$content->processTemplate('path/to/template/file.php');</pre>
+</li>
+<li>Merge with another view, or output content with specified layout
+<pre>$content->addToView($basecoat->view);
+echo $basecoat->render();</pre>
+</li>
+</ol>
 </p>
 
-<br />
-<h3>
-Layouts
-</h3>
-<p>
-Layouts are the base page structure that snippets are merged into.
-A typical site will have very few layout files since they contain only content common across multiple pages
-like headers, footers, core css/javascript, meta tags, etc.
+<h2>Section Tags</h2>
+<p>Section Tags are {{:sitename}}'s way of allowing content to be delimited so that it can be parsed and merged with content with the same section tags from other views, or rendered in a layout. The content in section tags are stored in variables of same name in the View controller. There is only one pre-configured tag, which is used for assigning content that does not have a section tag specified. By default, this tag is the "body" tag, but can be changed to any desired name through the <code>$default_namespace</code> class variable.<br />
+Tags in a template file are in the format of @tagname>, where "tagname" can be any text string. The tag must always be on it's own line, begin with @, end with &gt; and contain no spaces. Only the start of a section is required to be declared with a tag. The closing "tag" for a section is assumed to be the next tag declaration or the end of the file.
 </p>
 <p>
-Layouts are named/defined in <code>config.web.php</code>, just like routes.
-The list of defined layouts is stored in the <code>Config::$layouts</code> array, and a default route is defined (<code>Config::$layouts['default']</code>).
-If no layout is defined for the requested route, the default layout is used for output.
-</p>
-<p>
-A typical layout file will have the standard sections of an HTML document, plus any custom sections needed for the website.
-The custom sections can have any valid PHP variable names.
-The content class will handle initializing and managing the content sections defined.
-All layouts are loaded within the context of a content class instance, so variables should be referenced with <code>$this->variable</code>.
-</p>
-An example of a layout file:
-<pre>
-<?php
-echo str_replace(array('<','>'), array('&lt;', '&gt;'), <<<TEXT
-<html lang="<?php echo \$this->lang; ?>">
-<head>
-<title><?php echo \$this->title; ?></title>
-<?php echo \$this->head; ?>;
-
-<style type="text/css">
-h1 { font-weight:bold;background-color:#f0f0f0; }
-<?php echo \$this->css; ?>
-</style>
-
-<script type="text/javascript">
-<?php echo \$this->script; ?>
-</script>
-</head>
-<body>
-<?php echo \$this->page_header; ?>
-<?php echo \$this->messages; ?>
-
-</body>
-</html>
-TEXT
-);?>
-</pre>
-
-<br />
-<h3>
-Templates
-</h3>
-<p>
-Templates are loaded by the route file, processed by the content class, and are eventually merged into the defined layout for the page.
-By default, it is assumed a template file contains only content to be placed in the body of the page.
-However, content in templates can have defined "namespaces" to be merged into the corresponding sections in the layout file.
-If no namespaces are defined in the template, the content is merge into the "body" of the layout.
-</p>
-<p>
-<strong>@namespaces&gt;</strong>
-<p>
-Namespaces in a template file are in the format of @namespace>, where "namespace" can be any text string.
-The namespace tag must always be on it's own line, begin with @, end with &gt; and contain no spaces.
-Only the start of a namespace is required to be declared, the closing "tag" is assumed to be the next namespace declaration or the end of the file.
-Namespace tags should have a matching output variable in the layout template being used.
-This allows building up content in an out of order method that results in grouped output.
-For example, being able to declare multiple javascript blocks that get combined in the header or footer (end of page) of the layout file.
-</p>
-An example of a typical template file:
+An example of a typical template file with tags:
 <pre>
 @header&gt;
 &lt;meta name="description" content="Example of information to be added to the header"&gt;
@@ -105,38 +52,118 @@ More stuff to be added to the javascript "script" block
 </pre>
 </p>
 
+<h2>Template Variables</h2>
+<p>Template files are processed in the context of the View controller, outside of the global namespace. Data can be loaded into the View controller and made accessible in the template. Data is loaded in a simple name/value structure, whereby the "name" will be the name of the variable. Bulk loading using associative arrays is also supported. Since the templating system uses plain PHP, it is possible to reference data in the global namespace.
+</p>
 <p>
-An example of what a typical route file would contain:
+Example of loading data for use by a template:
 <pre>
 $content	= new Content();
-$content->add('variable_name', 'Variable Content' );
+$content->add('var1', 'Variable Content' );
+$content->add('var2', 'More Content' );
+$content->add('var3', array('supports','any','datatype') );
 $widgets	= array(
 	'widget1'	=> 'Today is '.date('l, F n, Y'),
 	'widget2'	=> 'It is '.date('z').' day of the year'
 );
 $content->multiadd( $widgets );
-
-// Load the template file defined for the current route
-$content->processTemplate($_ROUTES_[Core::$current_route]['template']);
-
-// Merge loaded template into the Page
-$content->addToPage();
-unset($content);
 </pre>
+
+Data that has been loaded into the View can then be referenced in the template:
+<pre>
+@body_head&gt;
+<?php
+echo str_replace(array('<','>'), array('&lt;', '&gt;'), <<<TEXT
+This should be put in the Body Head. <?php echo \$this->widget1;?>
+TEXT
+);
+?>
+
+
+@body&gt;
+<?php
+echo str_replace(array('<','>'), array('&lt;', '&gt;'), <<<TEXT
+Some content output with a variable <?php echo \$this->var1;?>.
+But there is <?php echo \$this->var2;?> to be shown.
+A list of words:
+<?php
+foreach(\$this->var3 as \$word) {
+	echo \$word.'<br />';
+}
+TEXT
+);
+?>
+</pre>
+
+<h4>But that's a lot of typing to output a variable... Data Tags</h4>
+<p>
+{{:sitename}} supports the concept of "data tags" to make outputting the value of variables a bit easier. This is a very simple search and replace system, not part of a templating markup language. The default data tag structure is: {{:var_name}}. A data tag in that structure will output the contents of $this-&gt;var_name.<br />
+Data tags are are replaced after the template file has been loaded and the PHP code embedded in it has been run. Only scalar variables are supported.
+</p>
+
+
+<h3>Layouts</h3>
+<p>
+Layouts are the final round of template output. A Layout is generally where all the content generated by previous views is merged into a template for output. Any section tags that were declared and used in previous views are available for output as variables of the same name. A typical website will usually have only a few layouts, sometimes only one. A typical HTML layout file will have the standard sections of an HTML document like header, title, style, script, etc.
+</p>
+An example of a layout file:
+<pre>
+<?php
+echo str_replace(array('<','>'), array('&lt;', '&gt;'), <<<TEXT
+<html lang="<?php echo \$this->lang; ?>">
+<head>
+<title><?php echo \$this->title; ?></title>
+<?php echo \$this->head; ?>;
+
+<style type="text/css">
+h1 { font-weight:bold;background-color:#f0f0f0; }
+<?php echo \$this->css; ?>
+</style>
+
+<script type="text/javascript">
+<?php echo \$this->script; ?>
+</script>
+</head>
+<body>
+
+<?php echo \$this->page_header; ?>
+<?php echo \$this->messages; ?>
+<?php echo \$this->body; ?>
+<?php echo \$this->footer; ?>
+
+</body>
+</html>
+TEXT
+);?>
+</pre>
+
+<p>
+Layouts do not have to be just HTML. Since they are just PHP and text, they generate any content desired (i.e. json, xml). A View Controller only loads and processes the template/layout file it is directed to, so any valid PHP file can be passed for processing. There are functions available to access all the data that has been loaded already. Below is an example of a layout that would output JSON instead of HTML. For example, if processing an AJAX call, the same routes can be run and content templates loaded, but the layout can be changed to alter the output format.
+</p>
+<pre>
+&lt;?php
+// Get content loaded by previous views
+$content_blocks	= $this->getData();
+// Output as JSON
+exit( json_encode($content_blocks) );
+</pre>
+
+<h3>Merging Views</h3>
+<p>
+Any view can be merged with another view to build up output in a modular process. The content blocks of one view become the data input of another view. 
 </p>
 
 <br />
 <h3>
-Content Class
+Static Content
 </h3>
 <p>
-The <code>content.class.php</code> is the key to managing content that is merged with templates and layouts.
-Each route should create it's own instance of the content class for "registering" data to be used in the templates and layouts.
-Templates and layouts are loaded into the instance, creating a closed environment to prevent any naming conflicts.
-A master content instance is always available in the <code>Content::$page</code> variable and can be referenced from anywhere.
-Any data that needs to be globally available can be registered with the core instance.
+Most web sites have pages that contain no dynamic content and are plain html or text. A special "static" route exists in {{:sitename}} that can be configured to process static template files.
 </p>
 
+<h3>
+Functions and Methods
+</h3>
 <p>
 <strong>add($name, $content)</strong>
 <br />
@@ -179,19 +206,19 @@ Clear any content that is currently stored in the instance.
 <p>
 <strong>getData()</strong>
 <br />
-Returns array of all the data variables that currently exist in the instance.
+Returns array of all the data variables that currently exist in the instance. Content blocks parsed from a template are converted to  "data" input when added to another view.
 </p>
 
 <p>
 <strong>getBlocks()</strong>
 <br />
-Returns array of all the content blocks that currently exist in the instance.
+Returns array of all the content blocks that were parsed from the processing of a template. 
 </p>
 
 <p>
-<strong>addToPage()</strong>
+<strong>addToView($view)</strong>
 <br />
-Merges the namespaced content blocks into the <code>Content::$page</code> instance.
+Converts the content blocks parsed from <code>processTemplate()</code> to input data of the specified view.
 </p>
 
 <br />

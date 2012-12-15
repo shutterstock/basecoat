@@ -97,9 +97,11 @@ class View {
 		echo implode("\n", $this->data);
 	}
 	
+/*
 	public function newView() {
 		return new View();
 	}
+*/
 	
 	/**
 	* Add content under the namespace

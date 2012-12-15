@@ -30,7 +30,7 @@
 <ul class="nav nav-tabs">
 <li class="<?php echo $this->requested_route == "/" ? "active" : ""; ?>"><a href="./">Home</a></li>
 <li class="<?php echo $this->requested_route == "configuration" ? "active" : ""; ?>"><a href="?page=configuration">Configuration</a></li>
-<li class="<?php echo $this->requested_route == "routes" ? "active" : ""; ?>"><a href="?page=routes">Routes</a></li>
+<li class="<?php echo $this->requested_route == "routes" ? "active" : ""; ?>"><a href="?page=routes">Routing</a></li>
 <li class="<?php echo $this->requested_route == "content" ? "active" : ""; ?>"><a href="?page=content">Content/Templates</a></li>
 <li class="<?php echo $this->requested_route == "messages" ? "active" : ""; ?>"><a href="?page=messages">Messaging</a></li>
 <li class="<?php echo $this->requested_route == "database" ? "active" : ""; ?>"><a href="?page=database">Database</a></li>

@@ -59,7 +59,7 @@ $bc->view->setTemplatesPath($path_templates);
 //
 // Add a hook before output to process common page elements
 $bc->addBeforeRender( function() use ($bc) {
-		$content	= $bc->view->newView();
+		$content	= new \Basecoat\View();
 		$content->processTemplate($bc->view->templates_path . 'common/header.php');
 		$content->processTemplate($bc->view->templates_path . 'common/footer.php');
 		$content->addToView($bc->view);
