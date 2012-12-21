@@ -1,19 +1,11 @@
 <?php
 
-$content	= new Content();
+$content = new \Basecoat\View();
 
-// Check if there is a decalared route template
-if ( isset(Config::$routes[Core::$current_route]['template']) ) {
-	$tpl_file		= Config::$routes[Core::$current_route]['template'];
-	
-} else {
-	$tpl_file		= BC_TEMPLATES . 'static/'.Core::$current_route.'.html';
-	
-}
-$tpl				= file_get_contents($tpl_file);
+$tpl = file_get_contents($basecoat->view->templates_path . $basecoat->routing->current['template']);
 
 $content->parseBlocks($tpl);
 
 // Add route content to page
-$content->addToPage();
+$content->addToView($basecoat->view);
 unset($content);

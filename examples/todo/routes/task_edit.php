@@ -1,33 +1,34 @@
 <?php
+global $tasks;
 
 // Check if we adding a new task, editing or saving
 if ( isset($_POST['task_id']) ) {
 	// Save task
 	if ($_POST['task_id']=='new') {
 		$task_data['created_on']	= date('Y-m-d');
-		$result	= \Basecoat\Core::$bc->tasks->save($_POST['task_data']);
+		$result	= $tasks->save($_POST['task_data']);
 	} else {
-		$result	= \Basecoat\Core::$bc->tasks->update($_POST['task_id'], $_POST['task_data']);
+		$result	= $tasks->update($_POST['task_id'], $_POST['task_data']);
 	}
 	if ( $result<=0 ) {
-		\Basecoat\Content::$messages->error('Error saving task: '.Core::$db->errorMsg);
+		$basecoat->messages->error('Error saving task: '.Core::$db->errorMsg);
 	} else {
-		\Basecoat\Content::$messages->info('The task has been saved, no do it!');
-		header('Location: '.\Basecoat\Config::$settings->url_root);
+		$basecoat->messages->info('The task has been saved, now do it!');
+		header('Location: ./');
 	}
 }
 
-$content	= new \Basecoat\Content();
+$content = new \Basecoat\View();
 
-$content->add('status_opts', \Basecoat\Core::$bc->tasks->getStatusOpts());
-$content->add('category_opts', \Basecoat\Core::$bc->tasks->getCategoryOpts());
+$content->add('status_opts', $tasks->getStatusOpts());
+$content->add('category_opts', $tasks->getCategoryOpts());
 
 
 if ( $_GET['id']!='new' ) {
 	// Retrieve task
-	$task_data	= \Basecoat\Core::$bc->tasks->get($_GET['id']);
+	$task_data	= $tasks->get($_GET['id']);
 	if ( !is_array($task_data) ) {
-		\Basecoat\Content::$messages->error('Invalid Task ID specified, entering a new Task');
+		$basecoat->messages->error('Invalid Task ID specified, entering a new Task');
 		$_GET['task_id']	= 'new';
 	}
 }
@@ -36,8 +37,8 @@ if ( $_GET['id']=='new' ) {
 	$task_data	= array(
 		'task'	=> '',
 		'description'	=> '',
-		'category_id'	=> \Basecoat\Core::$bc->tasks->default_category_id,
-		'status_id'		=> \Basecoat\Core::$bc->tasks->default_status_id,
+		'category_id'	=> $tasks->default_category_id,
+		'status_id'		=> $tasks->default_status_id,
 	);
 }
 $task_data['task_id']	= $_GET['id'];
@@ -45,6 +46,7 @@ $task_data['task_id']	= $_GET['id'];
 $content->multiadd($task_data);
 
 // Add route content to page
-$content->processTemplate(\Basecoat\Config::$routes[\Basecoat\Core::$current_route]['template']);
-$content->addToPage();
+$content->processTemplate($basecoat->view->templates_path . $basecoat->routing->current['template']);
+$content->addToView($basecoat->view);
+
 unset($content);

@@ -3,22 +3,22 @@
 Database
 </h2>
 <p>
-{{:sitename}} comes with a stand alone database class that uses PDO and is designed to use MySQL as the backend. 
-While the database class is fairly powerful, it is not designed to be an ORM and does require knowledge of SQL to use.
+{{:sitename}} comes with a stand alone database abstraction layer that uses PDO and is designed to use MySQL as the backend. 
+While the database class is fairly powerful, it is not designed to be an ORM and does require some knowledge of SQL to use.
 The database class is designed to be a low level tool that will handle the most common tasks in a high scalability environment.
 A place where ORMs often fail. The framework does not require this class and it is included for convenience. 
 </p>
 <p>
 <strong>Features:</strong>
 <ul>
-<li>On-demand connection - multiple connections can be defined, but a connection is only established once a query is run</li>
+<li>On-demand connection - multiple connections can be defined, but a connection is only established once a query is run on that connection.</li>
 <li>Connection Management - Every instance has a master and slave connection defined. But only one master connection is established and shared across all instances. By default, connections are singleton (1 connection per server) to prevent creating too many connections.</li>
-<li>Master/Multiple Slave support - queries that modify data are automatically routed through the Master connection. All other queries default to running through the slave connection, but can be forced to run against the master. </li>
+<li>Master/Multiple Slave support - INSERT, UPDATE and DELETE are automatically routed through the Master connection. All other queries default to running through the slave connection, but can be forced to run against the master on demand. </li>
 <li>Automatic Escaping - PDO data binding is used to prevent SQL injection.</li>
 <li>Bulk Inserts - an insert call automatically detects if a bulk insert should be performed. 
-Very large bulk inserts are automatically broken up, and multiple bulk inserts performed based on a max insert size setting to prevent slave/replication lag.</li>
+Very large bulk inserts are automatically broken up, and multiple bulk inserts performed based on a max insert size setting to alleviate slave/replication lag.</li>
 <li>Auto-reconnect - a dropped connection will automatically be detected, a new connection established and the last failed query rerun.</li>
-<li>Profiling - when profiling is enabled, all queries are timed and recorded. Number of connections established is also available.</li>
+<li>Profiling - when profiling is enabled, all queries are timed and recorded to help with debugging. Number of connections established is also available.</li>
 </ul>
 
 </p>

@@ -149,6 +149,7 @@ Routes are configured by declaring an associative array of named routes. The arr
 <ul>
 <li><b>function</b> (function) a callable function (i.e. anonymous function) to execute for processing</li>
 <li><b>file</b> (string) valid include path and file to load to process the route</li>
+<li><b>template</b> (string) a valid file name in the templates directory. This parameter is used internally by {{:sitename}} for special processing (i.e. servicing static files).
 <li><b>require_secure</b> (integer) automatically redirect the user to the secure version of the URL requested</li>
 <li><b>cacheable</b> (array) provides a way of declaring that a route is cacheable and how to cache.
 	<ul>

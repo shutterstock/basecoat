@@ -1,5 +1,5 @@
 <?php
-if (\Basecoat\Config::$use_pretty_urls) {
+if ($this->use_pretty_urls) {
 	$task_link	= 'task/?';
 } else {
 	$task_link	= '?page=task&';
@@ -10,7 +10,7 @@ if ( count($this->pastdue)>0 ) {
 
 	$this->tasklist_title	= 'Past Due';
 	$this->tasklist			= $this->pastdue;
-	include( BC_TEMPLATES . 'common/tasklist.tpl.php');
+	include( DIR_TPL . 'common/tasklist.tpl.php');
 }
 ?>
 
@@ -18,6 +18,6 @@ if ( count($this->pastdue)>0 ) {
 <?php
 $this->tasklist	= $this->todo;
 
-include( BC_TEMPLATES . 'common/tasklist.tpl.php');
+include( DIR_TPL . 'common/tasklist.tpl.php');
 
 

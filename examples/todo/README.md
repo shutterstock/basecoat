@@ -7,4 +7,4 @@ In the /config directory, run the todo.sql against the MySQL database of your na
 mysql -u [username] -p[password] [database] < todo.sql
 </code>
 
-Change database connection settings (Config::$settings->db) in the config.php file to reflect the setting for your database. This example defaults to using "pretty urls" which requires .htaccess support. If you do not have .htaccess support change the pretty urls setting to false in the config.web.php file. 
+Change database connection settings index.php file to reflect the setting for your database.

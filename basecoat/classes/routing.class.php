@@ -39,7 +39,7 @@ class Routing {
 	
 	private $default_routes = array(
 		'default' => '/',
-		'not_found' => 'not_found',
+		'undefined' => 'undefined',
 		'static' => 'static'
 	);
 
@@ -93,8 +93,8 @@ class Routing {
 		$this->default_routes['default']	= $route_name;
 	}
 	
-	public function set404($route_name) {
-		$this->default_routes['not_found']	= $route_name;
+	public function setUndefined($route_name) {
+		$this->default_routes['undefined']	= $route_name;
 	}
 	
 	public function setStatic($route_name) {
@@ -114,19 +114,20 @@ class Routing {
 		$basecoat	= $this->basecoat;
 		// check if valid route is specified
 		if ( !isset($this->routes[$route]) ) {
-			// No route by that name
+			// No route by that name, sanitize route name
+			$file_name = trim( trim(str_replace('/', '', $route)), '/');
 			// Check if there is a static template file matching request
-			if ( file_exists($basecoat->view->templates_path . 'static/'.$route.'.html') ) {
+			if ( file_exists($basecoat->view->templates_path . 'static/'.$file_name.'.html') ) {
 				$this->routes[$route]	= $this->routes[$this->default_routes['static']];
-				$this->routes[$route]['template']	= 'static/'.$route.'.html';
+				$this->routes[$route]['template']	= 'static/'.$file_name.'.html';
 			
-			} else if (file_exists($basecoat->view->templates_path . 'static/'.$route)) {
+			} else if (file_exists($basecoat->view->templates_path . 'static/'.$file_name)) {
 				// Create route using static route
 				$this->routes[$route]	= $this->routes[$this->default_routes['static']];
-				$this->routes[$route]['template']	= 'static/'.$route;
+				$this->routes[$route]['template']	= 'static/'.$file_name;
 			
 			} else {
-				$route	= $this->default_routes['not_found'];
+				$route	= $this->default_routes['undefined'];
 		
 			}
 		}
@@ -197,18 +198,21 @@ class Routing {
 			error_log("Sorry, but I'm afraid I can't do that. " . $route);
 		}
 
-		$this->processHooks($this->hooks['after']);
-
-		if ($this->profiling_enabled) {
-			$this->logProfiling($route);
-		}
-
+		$this->routeClose();
 	}
 	
 	public function runNext() {
 		if ( count($this->run_routes)>0 ) {
 			$next_route = trim( array_shift($this->run_routes), '.');
+			$this->routeClose();
 			$this->run($next_route);
+		}
+	}
+	
+	public function routeClose() {
+		$this->processHooks($this->hooks['after']);
+		if ($this->profiling_enabled) {
+			$this->logProfiling($this->running_route);
 		}
 	}
 	
@@ -218,6 +222,7 @@ class Routing {
 		}
 		// Check what URL format is in use
 		if ( $this->settings['use_pretty_urls'] ) {
+		echo 'Pretty URLS';
 			// Determine path relative to document root
 			$url_path	= str_replace(dirname($_SERVER['PHP_SELF']), '', $this->requested_url);
 			$url_path	= trim( parse_url($url_path, PHP_URL_PATH), '/');
@@ -273,7 +278,7 @@ class Routing {
 		// Log profiling information
 		$this->profiling['routes'][]	= array(
 			'route'=>$route_name,
-			'time'=>$end_time-$start_time, 
+			'time'=>round($end_time-$start_time,4), 
 			'start'=>$start_time,
 			'end'=>$end_time,
 			'seq'=>$log_counter

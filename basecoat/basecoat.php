@@ -19,11 +19,10 @@ class Basecoat {
 	*/
 	public $messages = null;
 	
+	/**
+	* Default instance of Database class
+	*/
 	public $db	= null;
-	
-	//public $layouts = array();
-	
-	//public $templates_path	= null;
 	
 	public $content	= null;
 	
@@ -54,7 +53,7 @@ class Basecoat {
 		$this->routing	= new Routing($this);
 		$this->routing->setUrl();
 		$this->view	= new View();
-		$this->messages	= new Messages($this->view);
+		$this->messages	= new Messages();
 		$this->messages->setTemplate(__DIR__ . '/templates/messages.tpl.php');
 	}
 	
@@ -82,14 +81,14 @@ class Basecoat {
 	
 	public function loadDb($settings, $master_id, $slave_id) {
 		require_once(__DIR__ . '/classes/db.pdo.php');
-		\DB::setServerConfig($settings, $master_id);
-		$this->db 	= \DB::getServerInstance($slave_id);
+		\Basecoat\DB::setServerConfig($settings, $master_id);
+		$this->db 	= \Basecoat\DB::getServerInstance($slave_id);
 	}
 
 	public function processRequest($url=null) {
 		$route_name	= $this->routing->parseUrl($url);
 		$this->routing->run($route_name);
-		$this->messages->display();
+		$this->messages->display($this->view);
 		return $this->render();
 	}
 	

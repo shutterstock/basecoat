@@ -7,6 +7,7 @@ class Tasks {
 	public $default_status_id	= 1;
 	public $default_category_id	= 1;
 	public $todo_status_id		= 1;
+	public $basecoat = null;
 
 	protected $base_tasks_q	= 'SELECT tasks.*,status.name status,categories.category
 			FROM tasks 
@@ -14,12 +15,12 @@ class Tasks {
 			LEFT JOIN categories ON tasks.category_id=categories.sid ';
 	
 	public function __construct() {
-		
+		$this->basecoat = $GLOBALS['basecoat'];
 	}
 	
 	public function get($id) {
 		$q			= $this->base_tasks_q . ' WHERE tasks.sid= :id';
-		$qresult	= \Basecoat\Core::$db->selectOne($q, array('id'=>$id), true);
+		$qresult	= $this->basecoat->db->selectOne($q, array('id'=>$id), true);
 		if ( !is_array($qresult) && $qresult<0 ) {
 			$this->logError($qresult.' '.\Basecoat\Core::$db->errorMsg. ' :: '.$q);
 		}
@@ -27,12 +28,12 @@ class Tasks {
 	}
 
 	public function save($task_data) {
-		$iresult	= \Basecoat\Core::$db->insert('tasks', $task_data);
+		$iresult	= $this->basecoat->db->insert('tasks', $task_data);
 		return $iresult;
 	}
 	
 	public function update($id, $task_data) {
-		$uresult	= \Basecoat\Core::$db->update('tasks', $task_data, 'sid=:id', array('id'=>$id));
+		$uresult	= $this->basecoat->db->update('tasks', $task_data, 'sid=:id', array('id'=>$id));
 		return $uresult;
 	}
 	
@@ -42,12 +43,12 @@ class Tasks {
 			// Load options
 			$q	= 'SELECT * FROM status ORDER BY order_by';
 			// Run query and retrieve records (query, bindings, useMaster, fetchAll)
-			$qresult	= \Basecoat\Core::$db->select($q, null, false, true);
+			$qresult	= $this->basecoat->db->select($q, null, false, true);
 			if ( $qresult>=0 ) {
-				self::$status_opts	= \Basecoat\Core::$db->selectResult;
+				self::$status_opts	= $this->basecoat->db->selectResult;
 			} else {
 				// Something went wrong
-				$this->logError($qresult.' '.\Basecoat\Core::$db->errorMsg. ' :: '.$q);
+				$this->logError($qresult.' '.$this->basecoat->db->errorMsg. ' :: '.$q);
 				return $qresult;
 			}
 		}
@@ -59,12 +60,12 @@ class Tasks {
 		if ( !is_array(self::$category_opts) ) {
 			$q	= 'SELECT * FROM categories ORDER BY category';
 			// Run query and retrieve records (query, bindings, useMaster, fetchAll)
-			$qresult	= \Basecoat\Core::$db->select($q, null, false, true);
+			$qresult	= $this->basecoat->db->select($q, null, false, true);
 			if ( $qresult>=0 ) {
-				self::$category_opts	= \Basecoat\Core::$db->selectResult;
+				self::$category_opts	= $this->basecoat->db->selectResult;
 			} else {
 				// Something went wrong
-				$this->logError($qresult.' '.\Basecoat\Core::$db->errorMsg. ' :: '.$q);
+				$this->logError($qresult.' '.$this->basecoat->db->errorMsg. ' :: '.$q);
 				return $qresult;
 			}
 		}
@@ -82,13 +83,13 @@ class Tasks {
 		}
 		$from_date		= date('Y-m-d', $from_date );
 		$q				= $this->base_tasks_q . 'WHERE due_date >= :from AND status_id= :status_id ORDER BY '.$order_by;
-		$qresult		= \Basecoat\Core::$db->select($q, array('from'=>$from_date, 'status_id'=>$this->todo_status_id));
+		$qresult		= $this->basecoat->db->select($q, array('from'=>$from_date, 'status_id'=>$this->todo_status_id));
 		if ( $qresult<0 ) {
 			// Something went wrong
-			$this->logError($qresult.' '.\Basecoat\Core::$db->errorMsg. ' :: '.$q);
+			$this->logError($qresult.' '.$this->basecoat->db->errorMsg. ' :: '.$q);
 			return $qresult;
 		}
-		\Basecoat\Core::$db->fetchAll($tasks);
+		$this->basecoat->db->fetchAll($tasks);
 		return $tasks;
 	}
 	
@@ -103,13 +104,13 @@ class Tasks {
 		}
 		$from_date		= date('Y-m-d', $from_date );
 		$q				= $this->base_tasks_q . 'WHERE due_date <= :from AND status_id= :status_id ORDER BY '.$order_by;
-		$qresult		= \Basecoat\Core::$db->select($q, array('from'=>$from_date, 'status_id'=>$this->todo_status_id));
+		$qresult		= $this->basecoat->db->select($q, array('from'=>$from_date, 'status_id'=>$this->todo_status_id));
 		if ( $qresult<0 ) {
 			// Something went wrong
-			$this->logError($qresult.' '.\Basecoat\Core::$db->errorMsg. ' :: '.$q);
+			$this->logError($qresult.' '.$this->basecoat->db->errorMsg. ' :: '.$q);
 			return $qresult;
 		}
-		\Basecoat\Core::$db->fetchAll($tasks);
+		$this->basecoat->db->fetchAll($tasks);
 		return $tasks;
 		
 	}

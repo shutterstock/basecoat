@@ -24,7 +24,7 @@ Overview
 <p>
 For example, if a route and it's subroutes requires a user to be logged in, the parent route can check to see if the user is logged in. If the user is not logged, the route stack can be modified so that the next route to load is the login route instead of the requested route(s). This also allows the loading of any route under any URL, largely doing away with the need for expensive redirects.
 </p>
-All route functions, methods and variables are reference via the routing instance.
+All route functions, methods and variables are referenced via the routing instance.
 <h4>$basecoat->routing->function()</h4>
 <br />
 Load initial routes using an associative array of route configurations. See Configuration section for options.
@@ -55,6 +55,26 @@ The configuration information about the currently running route.
 <h4>profiling (array)</h4>
 <p>
 Array of profiling information for each route run and how long it took. Helpful for debugging and performance tuning.
+<pre>
+// Example output of a profiling, 1 route run
+Array
+(
+    [start] => 1355678392.207
+    [routes] => Array
+        (
+            [0] => Array
+                (
+                    [route] => /
+                    [time] => 0.00099992752075195
+                    [start] => 1355678392.207
+                    [end] => 1355678392.208
+                    [seq] => 1
+                )
+
+        )
+
+)
+</pre>
 </p>
 
 
@@ -62,9 +82,9 @@ Array of profiling information for each route run and how long it took. Helpful 
 Processing
 </h2>
 <p>
-The function/file configuration options indicate which controller(s) to use to process the route (see Route Configuration in Configuration section). If both are declared, both are executed with the function being run first. This allows simple routes to be declared as functions and larger routes to be declared as files that included. By declaring both, the function could run pre-check code to see if the required file should be loaded (i.e. login check).
+The function/file configuration options indicate which controller(s) to use to process the route (see Route Configuration in the Configuration section). If both are declared, both are executed with the function being run first. This allows simple routes to be declared as functions and larger routes to be declared as files that are included. By declaring both, the function can run pre-check code to see if the required file should be loaded (i.e. login check), or configure the environment.
 <br />
-You can add custom route parameters and meta data that can be read and processed by your routing code. For example, adding a "template" or "require_login" option that can be checked to determine what needs to be done.
+Custom route parameters and meta data is support and can be read and processed by your routing code. For example, adding a "log_prefix" or "require_login" option that can be checked and used for processing.
 </p>
 
 <p>
@@ -74,7 +94,8 @@ The default URL to process is the currently requested URL. Optionally set a diff
 
 <p>
 <h4>processRequest()</h4>
-Allow {{:sitename}} to automatically start the processing of the current URL by calling this function. An optional URL parameter can be provided to process a URL other than the requested one. Typically this would be done for unit tests or command line processing. {{:sitename}} will only process the first route in the URL, it is up to the route controller to call the next route in the stack by calling <code>runNext()</code>. This allows other routes to be run, new routes registered, configurations changed, before the next route is processed. Since routing is hierarchical, subroute configurations are loaded dynamically using the <code>addRoutes()</code> method. Typically additional route configurations are registered by the current route controller.
+Allow {{:sitename}} to automatically start the processing of the current URL by calling this function. An optional URL parameter can be provided to process a URL other than the requested one. Typically this would be done for unit tests or command line processing where multiple "URLs" need to be processed and this function is called multiple times. 
+<br />{{:sitename}} will only process the first route in the URL, it is up to the route controller to call the next route in the stack by calling <code>runNext()</code>. This allows other routes to be run, new routes registered, configurations changed, before the next route is processed. Since routing is hierarchical, subroute configurations are loaded dynamically using the <code>addRoutes()</code> method. Typically additional route configurations are registered by the current route controller.
 <blockquote>
 <b>Typical processing flow:</b><br />
 + route controller executed<br />
@@ -147,18 +168,19 @@ $basecoat->routing->runNext();
 </p>
 
 
-<h2>Special Routes</h2>
+<h2>Static Files &amp; Special Routes</h2>
 <p>
-{{:sitename}} provides some built-in functionality for certain standard default routes. These special routes are: static, not_found (404). They are used for processing static content files and display a 404 Not Found page respectively.
+{{:sitename}} provides some built-in functionality for certain standard default routes. These special routes are: static, undefined. They are used for processing static content files and to process an undefined route respectively.
 </p>
 <h4>static</h4>
 <p>
-The static route is used for processing static content files and merging them with the configured layout. When a requested URL is not found in the configuration list, the static templates directory will be checked for a file with a matching name. If a file exists, an alias of the "static" route will be dynamically configured and run. By default, a route called <code>static</code> should always be configured. The name of this route can be customized with the <code>setStatic([routename])</code> method.
+The static route is used for processing static content files (i.e. html) and merging them with the configured layout. There is no need to configure a route for each file if the file has no special processing requirements. When a requested URL is not found in the configured route list, the static templates directory will be checked for a file with a matching name. Both the "route" name and the route name + .html are checked. The route name is sanitized (leading and trailing / and spaces are removed) before checking the for a file. If a file exists, an alias of the "static" route will be dynamically configured and run. 
+<br />By default, a route called <code>static</code> should always be configured. The name of this route can be customized with the <code>setStatic([routename])</code> method.
 </p>
 
-<h4>not_found</h4>
+<h4>undefined</h4>
 <p>
-If there is no matching configured route found, and no static file matching the requested route, then the <code>not_found</code> route will be run. By default, a route called <code>not_found</code> should always be configured. The name of this route can be customized with the <code>set404([routename])</code> method.
+If there is no matching configured route found, and no static file matching the requested route, then the <code>undefined</code> route will be run. By default, a route called <code>undefined</code> should always be configured. The name of this route can be customized with the <code>setUndefined([routename])</code> method.
 </p>
 
 <br />

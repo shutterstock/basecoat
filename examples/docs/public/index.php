@@ -91,12 +91,6 @@ $routes = array(
 		'file'		=> $path_routes . 'data.php',
 		'data_only'	=> 1
 	),
-	'not_found' => array(
-		'file'		=> $path_routes . '404.php',
-		'template'	=> '404.tpl.php',
-		'layout'	=> 'basic',
-		'data_only'	=> 1
-	),
 	'log'	=> array(
 		'file' 		=> $path_routes . 'log_action.php',
 		'data_only'	=> 1
@@ -134,12 +128,11 @@ $routes = array(
 	'hello'	=> array(
 		'file' 		=> 'helloworld.php',
 	),
-	
-	
-	// Bigstock API example
-	'bspapi'	=> array(
-		'file' 		=> $path_routes . 'bspapi/index.php',
-		'layout'	=> 'bspapi.php',
+	'undefined' => array(
+		'file'		=> $path_routes . '404.php',
+		'template'	=> '404.tpl.php',
+		'layout'	=> 'basic',
+		'data_only'	=> 1
 	),
 
 );

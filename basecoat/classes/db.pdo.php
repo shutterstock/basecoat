@@ -1,4 +1,5 @@
 <?php
+namespace Basecoat;
 
 class DB {
 	/**
@@ -14,21 +15,20 @@ class DB {
 	/**
 	 * Default Database Connection parameters
 	 * @var array
-	 *PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES utf8"
 	 */
 	private static $connectDefaults	= array('host'=>'localhost',
 											'label'=>'default', 
 											'type'=>'mysql', 
-											'attr'=>array(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY=>true)
+											'attr'=>array(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY=>true, \PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES UTF8")
 											);
 	/**
 	 * List of server and connection parameters to use for each on
 	 * An associatve array in the following format:
-	 * id => array('host' => 'host', 'username' => 'usernam', 'password' => 'password', 'db' => 'database', 'label'=>'master','attr'=>array(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true))
+	 * id => array('host' => 'host', 'username' => 'username', 'password' => 'password', 'db' => 'database', 'label'=>'master','attr'=>array(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true))
 	 *
 	 * @var array
 	 */
-	public static $servers		= null;
+	private static $servers		= null;
 	/**
 	 * Database handle for instance
 	 * @var object
@@ -45,10 +45,20 @@ class DB {
 	 */
 	private static $mdbh		= null;
 	/**
+	 * Error codes to attempt a reconnect on
+	 *
+	 */
+	private static $reconnect_on_error	= array(2003, 2004, 2005, 2006, 2011, 2012);
+	/**
 	 * Master Statement handle for class
 	 * @var object
 	 */
 	private static $msth		= null;
+	/**
+	* mysql wait_timeout value
+	*/
+	private static $mtimeout	= 90;
+	private $timeout			= 90;
 	/**
 	 * A "human" name to assign to the database connection
 	 * @var string
@@ -153,10 +163,7 @@ class DB {
 	* @param array $servers list of servers to connect to. The array key should be the "id" of the server.
 	* @param mixed $masterKey	the array key in $servers that acts as the Master server
 	*/
-	public static function setServerConfig( $servers, $masterKey=null ) {
-		if ( !is_array($servers) ) {
-			return -1;
-		}
+	public static function setServerConfig( array $servers, $masterKey=null ) {
 		self::$servers	= $servers;
 		if ( is_null($masterKey) ) {
 			$masterKey	= 0;
@@ -177,24 +184,31 @@ class DB {
 	*/
 	public static function getServerInstance( $serverKey, $new=false ) {
 		if ( !isset(self::$servers[$serverKey]) ) {
+			self::$errors[]		= array('connection'=>'config', 'code'=>'n/a', 'msg'=>'Invalid server configuration key ('.$serverKey.')');
 			return -1;
 		}
 		if ( !isset(self::$instances[$serverKey]) ) {
 			// No instances, create one
 			self::$instances[$serverKey][]	= new DB(self::$servers[$serverKey]);
-			return self::$instances[$serverKey][0];
 		} else if ( $new ) {
 			// Instance exists, but force creation of a new one
 			self::$instances[$serverKey][]	= new DB(self::$servers[$serverKey]);
+			// check if timeout value needs to be set
+			if ( isset(self::$servers[$serverKey]['timeout']) ) {
+				self::$instances[$serverKey][ count(self::$instances[$serverKey])-1 ]->setConnectTimeout( self::$servers[$serverKey]['timeout'] );
+			}
 			return self::$instances[$serverKey][ count(self::$instances[$serverKey])-1 ];
 		} else if ( is_object(self::$instances[$serverKey][0]) ) {
 			// return first existing instance, providing it still exists
-			return self::$instances[$serverKey][0];
 		} else {
 			// Instance exists, but is no longer an object
 			self::$instances[$serverKey][0]	= new DB(self::$servers[$serverKey]);
-			return self::$instances[$serverKey][0];
 		}
+		// check if timeout value needs to be set
+		if ( isset(self::$servers[$serverKey]['timeout']) ) {
+			self::$instances[$serverKey][0]->setConnectTimeout( self::$servers[$serverKey]['timeout'] );
+		}
+		return self::$instances[$serverKey][0];
 	}
 
 	/**
@@ -216,6 +230,14 @@ class DB {
 		self::$instanceCntr++;
 	}
 
+	/**
+	 * Actions to perform when class is destructed
+	 */
+	public function __destruct() {
+		$this->disconnect();
+		$this->disconnect(true);
+	}
+	
 	/**
 	 * Set database connection parameters. This does not establish a connection,
 	 * only sets the parameters for a connection.
@@ -258,18 +280,26 @@ class DB {
 	 * Establish a connection to the database. Note: Connections are "on demand", you shouldn't need to call this function yourself
 	 * Called automatically by execQuery if no connection.
 	 * Connection parameters must have already been set with setConnectParams
-	 * Use $persistantConnections variable to toggle persistant connections (DON'T USE PERSISTANT CONNECTIONS UNLESS YOU KNOW WHY)
+	 * Use $persistantConnections variable to toggle persistant connections 
+	 * (DON'T USE PERSISTANT CONNECTIONS UNLESS YOU KNOW WHY YOU SHOULDN'T)
 	 *
 	 * @return mixed		returns 1 on success or -1 on failure
 	 */
-	public function connect($useMaster=false) {
-		if ( $useMaster ) {
-			return $this->connectMaster();
+	public function connect($useMaster=false, $reconnect=false) {
+		if ( $reconnect ) {
+			$this->disconnect($useMaster);
 		}
-		if ( is_object($this->dbh) ) {
+		if ( $useMaster ) {
+			return $this->connectMaster($reconnect);
+		}
+		if ( is_object($this->dbh) && !$reconnect ) {
 			// Already connected
 			return 1;
 		}
+
+		static $retries		= 0;
+		$connect_result	= 1;
+
 		if ( $this->debug>1 ) {
 			echo 'DB CONNECT PARAMS: '.print_r($this->connectParams, true)."\n";
 		}
@@ -278,13 +308,35 @@ class DB {
 			$dsn	.= ';unix_socket='.$this->connectParams['sock'];
 		}
 		try {
-			$this->dbh	= new PDO( $dsn, $this->connectParams['username'], $this->connectParams['password'], $this->connectParams['attr'] );
+			$this->dbh	= new \PDO( $dsn, $this->connectParams['username'], $this->connectParams['password'], $this->connectParams['attr'] );
 		} catch (Exception $e) {
 			$this->errorMsg		= $e->getMessage();
-			return -1;
+			$this->errorCode	= $e->getCode();
+			error_log('DB CLASS ERROR: '.$this->errorMsg, 0);
+			if ( $retries<2 ) {
+				$retries++;
+				error_log('DB CLASS ERROR: Attempting to connect again - '.$retries.' '.$this->connectParams['host'], 0);
+				usleep(100000);
+				$connect_result	= $this->connect($useMaster, $reconnect);
+			} else {
+				$connect_result	= -1;
+				$retries	= 0;
+			}
+			return $connect_result;
+		}
+		//Update timeout setting
+		if ( $this->timeout>0 ) {
+			$this->rawQuery('SET SESSION wait_timeout='.$this->timeout, false);
+		}
+		if ( $reconnect ) {
+			error_log('DB CLASS RECONNECTED (S)', 0);
 		}
 		self::$connections++;
-		return 1;
+		if ( $retries>0 ) {
+			error_log('DB CLASS: Connected after '.$retries.' attempts '.$this->connectParams['host']);
+		}
+		$retries	= 0;
+		return $connect_result;
 	}
 	
 	/**
@@ -292,32 +344,78 @@ class DB {
 	*
 	* @return mixed		returns 1 on success or -1 on failure
 	*/
-	private function connectMaster() {
-		if ( is_object(self::$mdbh) ) {
+	private function connectMaster($reconnect=false) {
+		if ( is_object(self::$mdbh) && !$reconnect ) {
 			// Already connected
 			return 1;
 		}
 		if ( $this->debug>1 ) {
 			echo 'MASTER DB CONNECT PARAMS: '.print_r(self::$connectParamsMaster, true)."\n";
 		}
+		static $retries		= 0;
+		$connect_result	= 1;
+
 		$c			=& self::$connectParamsMaster;
 		$dsn		= $c['type'].':dbname='.$c['db'].';host='.$c['host'];
 		if ( isset($c['sock']) ) {
 			$dsn	.= ';unix_socket='.$c['sock'];
 		}
 		try {
-			self::$mdbh	= new PDO( $dsn, $c['username'], $c['password'], $c['attr'] );
+			self::$mdbh	= new \PDO( $dsn, $c['username'], $c['password'], $c['attr'] );
 		} catch (Exception $e) {
 			$this->errorMsg		= $e->getMessage();
-			return -1;
+			$this->errorCode	= $e->getCode();
+			error_log('DB CLASS ERROR: '.$this->errorMsg, 0);
+			if ( $retries<2 ) {
+				$retries++;
+				error_log('DB CLASS ERROR: Attempting to connect again - '.$retries.' '.$c['host'], 0);
+				usleep(100000);
+				$connect_result	= $this->connectMaster($reconnect);
+			} else {
+				$connect_result	= -1;
+				$retries	= 0;
+			}
+			return $connect_result;
+		}
+		if ( $reconnect ) {
+			error_log('DB CLASS RECONNECTED (M)', 0);
 		}
 		self::$connections++;
-		return 1;
+		//Update timeout setting
+		if ( self::$mtimeout>0 ) {
+			$this->rawQuery('SET SESSION wait_timeout='.self::$mtimeout, true);
+		}
+		if ( $retries>0 ) {
+			error_log('DB CLASS: Connected after '.$retries.' attempts '.$c['host']);
+		}
+		$retries	= 0;
+		return $connect_result;
+	}
+	
+	/**
+	 * Set how long a db connection will be left open
+	 * before disconnecting
+	 *
+	 * @param Integer $value seconds before timeout
+	 * @param Boolean $useMaster set timeout value on master/slave connection
+	 */
+	public function setConnectTimeout($value, $useMaster=false) {
+		$value	= (int)$value;
+		if ( $useMaster ) {
+			self::$mtimeout	= $value;
+		} else {
+			$this->timeout	= $value;
+		}
+		if ( is_object($this->dbh) ) {
+			// Already connected, update timeout value
+			$this->rawQuery('SET SESSION wait_timeout='.$value, $useMaster);
+		}
 	}
 
 	/**
-	 * disconnect from the database
+	 * Disconnect from the database
 	 *
+	 * @param Boolean $useMaster disconnect from master/slave
 	 */
 	public function disconnect($useMaster=false) {
 		if ( $useMaster ) {
@@ -336,6 +434,7 @@ class DB {
 	 * @return int			result of running the query (not data)
 	 */
 	public function rawQuery( $query, $useMaster=false ) {
+		static $retries		= 0;
 		if ( $this->connect($useMaster) == -1 ) {
 			return -2;
 		}
@@ -359,7 +458,16 @@ class DB {
 			// Log error
 			$this->logErrorInfo($dbh, $connectionLabel);
 			$debug			= $this->errorMsg;
-			$result			= -1;
+			// Check for dropped connection
+			if ( in_array($this->errorCode, self::$reconnect_on_error) && $retries==0 ) {
+				$retries++;
+				$this->connect($useMaster, true);
+				$result		= $this->rawQuery( $query, $useMaster);
+			} else {
+				$result		= -1;
+			}
+		} else if ( $retries>0 ) {
+			$retries	= 0;
 		}
 		$this->updateProfiling( $query, null, $qTime, $result, $connectionLabel, $debug );
 		return $result;
@@ -378,7 +486,7 @@ class DB {
 			return -2;
 		}
 		if ( is_null($attr) ) {
-			$attr			= array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY);
+			$attr			= array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY);
 		}
 		$this->lastQuery	= $query;
 		if ( $useMaster ) {
@@ -394,10 +502,19 @@ class DB {
 		}
 		if ( $sth===false ) {
 			$this->logErrorInfo($dbh, $connectionLabel);
-			return -1;
+			// Check for dropped connection
+			if ( in_array($this->errorCode, self::$reconnect_on_error) && $retries==0 ) {
+				$retries++;
+				$this->connect($useMaster, true);
+				$result	= $this->prepare( $query, $useMaster, $attr);
+			} else {
+				$result	= -1;
+			}
+		} else {
+			$result	= 1;
 		}
-		$sth->setFetchMode(PDO::FETCH_ASSOC);
-		return 1;
+		$sth->setFetchMode(\PDO::FETCH_ASSOC);
+		return $result;
 	}
 	
 	/**
@@ -409,6 +526,7 @@ class DB {
 	 * @return int returns number of rows that were affected, or -1 if query failed
 	 */
 	public function execute( $bindings = array(), $useMaster=false ) {
+		static $retries		= 0;
 		$debug				= null;
 		if ( $useMaster ) {
 			$sth			=& self::$msth;
@@ -425,10 +543,20 @@ class DB {
 				$dbh		= ( $useMaster ? self::$mdbh : $this->dbh );
 				$debug		= $this->explainQuery($this->lastQuery, $bindings, $dbh);
 			}
+			if ( $retries>0 ) {
+				$retries	= 0;
+			}
 		} else {
 			$this->logErrorInfo($sth, $connectionLabel);
-			$debug			= $this->errorMsg;
-			$result			= -1;
+			// Check for dropped connection
+			if ( in_array($this->errorCode, self::$reconnect_on_error) && $retries==0 ) {
+				$retries++;
+				$this->connect($useMaster, true);
+				$result		= $this->execute( $bindings, $useMaster);
+			} else {
+				$debug		= $this->errorMsg;
+				$result		= -1;
+			}
 		}
 		$qTime				= (round(microtime(true),3)-$qStartTime);
 		$this->updateProfiling( $this->lastQuery, $bindings, $qTime, $result, $connectionLabel, $debug );
@@ -445,6 +573,7 @@ class DB {
 	 * @return int 	returns number of rows selected. Use SQL_CALC_FOUND_ROWS with qFoundRows if using LIMIT, to get total rows found.
 	 */
 	public function select( $query, $bindings=null, $useMaster=false, $fetchAll=false ) {
+		static $retries		= 0;
 		if ( $this->connect($useMaster) == -1 ) {
 			return -2;
 		}
@@ -475,9 +604,19 @@ class DB {
 			if ( $sth===false  ) {
 				$this->logErrorInfo($dbh, $connectionLabel);
 				$debug			= $this->errorMsg;
-				$result			= -1;
+				// Check for dropped connection
+				if ( in_array($this->errorCode, self::$reconnect_on_error) && $retries==0 ) {
+					$retries++;
+					$this->connect($useMaster, true);
+					$result		= $this->select( $query, $bindings, $useMaster, $fetchAll);
+				} else {
+					$result		= -1;
+				}
 			} else {
 				$result 			= $sth->rowCount();
+				if ( $retries>0 ) {
+					$retries	= 0;
+				}
 				// Check if we need to run an explain for debugging
 				if ( $this->debug>0 ) {
 					$debug		= $this->explainQuery($query, null, $dbh);
@@ -496,7 +635,7 @@ class DB {
 		}
 		if ( $result>-1 ) {
 			if ( $fetchAll ) {
-				if ($result = $this->fetchAll($this->selectResult) == -1 ) {
+				if ( $this->fetchAll($this->selectResult, null, false, $useMaster) == -1 ) {
 					return -1;
 				}
 			}
@@ -506,6 +645,39 @@ class DB {
 		}
 	}
 	
+	/**
+	 * Run a SELECT query with optional data binding values, and retrieves ALL rows
+	 * This will use a separate statement handle so other outstanding queries
+	 * do not get overwritten
+	 *
+	 * @param string $query	SQL Select query to run
+	 * @param array $bindings		array of values to bind to the query. Can be an associative array to bind by name
+	 * @param boolean $useMaster	set to TRUE to use the master server connection
+	 * @return mixed 	returns associative array of data on success, negative int on failure
+	 */
+	public function selectAll($query, $bindings=null, $useMaster=false) {
+		// Save current statement handle
+		if ( $useMaster ) {
+			$sth	= self::$msth;
+			self::$msth	= null;
+		} else {
+			$sth	= $this->sth;
+			$this->sth	= null;
+		}
+		$qresult	= $this->select( $query, $bindings, $useMaster, true);
+		// Restore previous statement handle
+		if ( $useMaster ) {
+			self::$msth	= $sth;
+		} else {
+			$this->sth	= $sth;
+		}
+		
+		if ( $qresult>0 ) {
+			return $this->selectResult;
+		} else {
+			return $qresult;
+		}
+	}
 	
 	/**
 	 * Run a SELECT query with optional data binding values, and retrieve only 1 row
@@ -551,7 +723,7 @@ class DB {
 			$this->logErrorInfo($dbh, 'debug');
 			return 'statement error';
 		} else {
-			$explanation	= $explain_sth->fetchAll(PDO::FETCH_ASSOC);
+			$explanation	= $explain_sth->fetchAll(\PDO::FETCH_ASSOC);
 			return $explanation;
 		}
 	}
@@ -641,7 +813,7 @@ class DB {
 		if ( is_array($data[ key($data) ]) ) {
 			$recCount		= count($data);
 			// Get Field List
-			$fields			= array_keys($data[0]);
+			$fields			= array_keys($data[key($data)]);
 			// Create field string
 			$ifields		= '`'.implode('`,`',$fields).'`';
 			$batches		= ceil($recCount/$this->bulkInsertSize)."\n";
@@ -654,11 +826,16 @@ class DB {
 				$idata		= array();
 				$bindings	= array();
 				// Create bindings
-				for ( $i=0; $i<$iend; $i++ ) {
-					foreach( $data[$istart+$i] as $field=>$val ) {
+				$data_block	= array_slice($data, $istart, $this->bulkInsertSize);
+				$i			= 0;
+				$bcnt		= 0;
+				foreach ( $data_block as $rec ) {
+					foreach( $rec as $field=>$val ) {
 						$idata[$field.$i]	= $val;
 					}
 					$bindings[]			= '(:'.implode($i.',:', $fields).$i.')';
+					$bcnt +=count($fields);
+					$i++;
 				}
 				// Check if a prepare statement needs to be run (first and last inserts)
 				if ( $unprepared || $b==$batches ) {
@@ -666,7 +843,12 @@ class DB {
 					$this->prepare($pquery, $useMaster);
 					$unprepared	= false;
 				}
-				$insertCnt	+= $this->execute($idata, $useMaster);
+				$iresult	= $this->execute($idata, $useMaster);
+				if ( $iresult>0 ) {
+					$insertCnt	+= $iresult;
+				} else {
+					return $insertCnt;
+				}
 			}
 			$this->insertId		= $dbh->lastInsertId();
 
@@ -702,9 +884,9 @@ class DB {
 	 * @param boolean $useMaster	set to TRUE to use the master server connection
 	 * @return int		number of rows deleted
 	 */
-	public function delete( $tablename, $filter, $filterBindings=null, $useMaster=true ) {
+	public function delete( $tablename, $filter, $filterBindings=null, $useMaster=true, $modifiers='' ) {
 		$tablename	= '`'.str_replace('.', '`.`', trim($tablename, '"\'`') ).'`';
-		$query		= 'DELETE FROM '.$tablename.' WHERE '.$filter;
+		$query		= 'DELETE ' . $modifiers . ' FROM '.$tablename.' WHERE '.$filter;
 		$this->prepare($query, $useMaster);
 		return $this->execute($filterBindings, $useMaster);
 	}
@@ -727,7 +909,7 @@ class DB {
 			return -1;
 		}
 		if ( is_null($method) ) {
-			$method		= PDO::FETCH_ASSOC;
+			$method		= \PDO::FETCH_ASSOC;
 		}
 		return $sth->fetch($method);
 	}
@@ -757,7 +939,7 @@ class DB {
 			return -1;
 		}
 		if ( is_null($method) ) {
-			$method		= PDO::FETCH_ASSOC;
+			$method		= \PDO::FETCH_ASSOC;
 		}
 		$resultVar		= array();
 		if ( is_null($keyField) ) {
@@ -794,7 +976,7 @@ class DB {
 			$this->errorMsg		= 'Statement handle is not an object.';
 			return -1;
 		}
-		while( $row = $sth->fetch(PDO::FETCH_ASSOC) ) {
+		while( $row = $sth->fetch(\PDO::FETCH_ASSOC) ) {
 			$this->selectResult[]	= $row[ $fieldName ];
 		}
 		return $this->selectResult;
@@ -816,78 +998,7 @@ class DB {
 	public function clearResult() {
 		$this->selectResult	= array();
 	}
-	
-	
-	/**
-	 * Data caching methods
-	 */
-	 
-	public function addDataCache($category, $id, $data) {
-		if ( is_array( $data ) ) {
-			$data	= serialize( $data );
-		}
-		$saveData	= array('category'=>$category, 'dataId'=>$id, 'content'=>$data, 'cachedOn'=>date('Y-m-d H:i:s'));
-		$qresult	= $this->insert('dataCache', $saveData );
-		if ( $qresult>0 ) {
-			return $this->insertID;
-		} else {
-			return -1;
-		}
-	}
-
-	public function updateDataCache($category, $id, $data) {
-		$saveData	= array('category'=>$category, 'dataId'=>$id, 'content'=>$data, 'cachedOn'=>date('Y-m-d H:i:s'));
-		$qresult	= $this->update('dataCache', 
-							$saveData, 
-							' category=:category AND dataId=:id',
-							array('category'=>$category, 'id'=>$id)
-							);
-		return $qresult;
-	}
-
-	public function updateFailover($category, $id) {
-		$qresult	= $this->update('dataCache', 
-							array('lastFailover'=>date('Y-m-d H:i:s')), 
-							' category=:category AND dataId=:id',
-							array('category'=>$category, 'id'=>$id)
-							);
-		return $qresult;
-	}
-
-	public function getDataCache($category, $id) {
-		$query		= 'SELECT * FROM dataCache WHERE category=:category AND dataId=:id';
-		$qresult	= $this->select($query, array('category'=>$category, 'id'=>$id), true, true);
-		if ( $qresult>0 ) {
-			return $this->selectResult;
-		} else {
-			return -1;
-		}
-	}
-
-	public function deleteDataCache($category, $id) {
-		$qresult	= $this->delete('dataCache',
-							' category=:category AND dataId=:id',
-							array('category'=>$category, 'id'=>$id)
-							);
-		if ( $qresult>0 ) {
-			return mysql_affected_rows();
-		} else {
-			return -1;
-		}
-	}
-
-	public function cleanDataCache($olderThan, $category) {
-		$qresult	= $this->delete('dataCache',
-							' category=:category AND cachedOn>=:olderThan',
-							array('category'=>$category, 'olderThan'=>$olderThanid)
-							);
-		if ( $qresult>0 ) {
-			return mysql_affected_rows();
-		} else {
-			return -1;
-		}
-	}
-	
+		
 	/**
 	 * Update profiling array with query information
 	 *
@@ -908,6 +1019,15 @@ class DB {
 		}
 	}
 	
+	/**
+	 * Resets the profiling array
+	 */
+	public function resetProfiling() {
+		self::$queryCntr = 0;
+		self::$queryTime = 0;
+		self::$profiling = array();
+	}
+
 	/**
 	 * Retrieve profiling information
 	 * @return array
@@ -936,7 +1056,7 @@ class DB {
 		$this->errorCode	= $errorInfo[1];
 		$this->errorMsg		= $errorInfo[2];
 		if ( $this->useErrorLog ) {
-			error_log('DB CLASS ERROR:('.$this->errorCode.') '.$this->errorMsg, 0);
+			error_log('DB CLASS ERROR:('.$this->errorCode.') '.$this->errorMsg .' :: ' . $this->lastQuery . ' :: URL '.$_SERVER['REQUEST_URI']. ' M/S:'.self::$connectParamsMaster['host'].'/'.$this->connectParams['host'], 0);
 		}
 		self::$errorCntr++;
 		// Check for too many errors

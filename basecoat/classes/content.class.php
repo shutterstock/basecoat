@@ -12,7 +12,6 @@ class View {
 	*/
 	public $layouts	= array();
 	public $layout	= null;
-	public $default_layout	= null;
 	
 	public $templates_path	= null;
 	
@@ -57,14 +56,36 @@ class View {
 	public function __construct() {
 	}
 	
+	/*
+	* Load the list of layouts. An associative array where the key is the layout name 
+	* and the value is the relative path to the layout file from the templates directory. 
+	* Optionally pass name of default layout.
+	*
+	* @param Array $layouts associative array of layouts names and relative paths
+	* @param String $default name of layout to set as default
+	*/
 	public function setLayouts($layouts, $default=null) {
 		$this->layouts	= $layouts;
+		if ( !is_null($default) ) {
+			$this->setLayout($default);
+		}
 	}
 	
+	/*
+	* Set the layout to use for output. Name must match one set with setLayouts().
+	*
+	* @param String @layout_name name of layout
+	*/
 	public function setLayout($layout_name) {
 		$this->layout	= $layout_name;
 	}
 	
+	/*
+	* Get the relative path to a layout file. Default is layout set with setLayout().
+	*
+	* @param String $layout_name name of layout
+	* @return String path to layout file relative  to templates path
+	*/
 	public function getLayout($layout_name=null) {
 		if (is_null($layout_name)) {
 			$layout_name	= $this->layout;
@@ -72,6 +93,11 @@ class View {
 		return $this->layouts[$layout_name];
 	}
 	
+	/**
+	* Path to templates directory. Use as a prefix when referencing templates and layouts.
+	*
+	* @param String $path valid directory path
+	*/
 	public function setTemplatesPath($path) {
 		$this->templates_path	= $path;
 	}
@@ -96,13 +122,7 @@ class View {
 	public function __toString() {
 		echo implode("\n", $this->data);
 	}
-	
-/*
-	public function newView() {
-		return new View();
-	}
-*/
-	
+
 	/**
 	* Add content under the namespace
 	* By default append to any existing data item with same namespace
@@ -141,7 +161,7 @@ class View {
 	* @param String $tpl template text to search and replace data tags on
 	* @return String the processed template with data tags replaced
 	*/
-	public function replaceDataTags($tpl) {
+	public function replaceDataTags(&$tpl) {
 		if ( !$this->enable_data_tags ) { 
 			return $tpl;
 		}
@@ -150,15 +170,22 @@ class View {
 			$makeTags	= function(&$tag, $key, $tag_wrap) {
 				$tag	= $tag_wrap['prefix'].$tag.$tag_wrap['suffix'];
 			};
-			$tag_keys	= array_keys($this->data);
+			// Extract scalar variable
+			$data_tags = array();
+			foreach($this->data as $k=>$v) {
+				if ( is_scalar($v) ) {
+					$data_tags[$k] = $v;
+				}
+			}
+			$tag_keys	= array_keys($data_tags);
 			array_walk($tag_keys, $makeTags, $this->data_tags_delimiters);
 			// search and replace data tags
-			$tpl		= str_replace($tag_keys, $this->data, $tpl);
+			$tpl		= str_replace($tag_keys, $data_tags, $tpl);
 		}
 		// cleanup any lingering tags
 		//$this->stripDataTags($tpl);
 		//$tpl	= preg_replace('/{{:.[^}}]+}}/', '', $tpl);
-		return $tpl;
+		//return $tpl;
 		
 	}
 	
@@ -199,7 +226,7 @@ class View {
 		ob_start();
 		include($tpl);
 		$content	= ob_get_clean();
-		$content	= $this->replaceDataTags($content);
+		$this->replaceDataTags($content);
 		if ( $parse ) {
 			return $this->parseBlocks($content);
 		} else {
@@ -268,7 +295,7 @@ class View {
 	}
 	
 	/**
-	* Merge content blocks for this instance with master instance
+	* Merge content blocks for this instance with passed instance
 	*
 	* @return Integer number of content blocks merged
 	*/
@@ -290,15 +317,12 @@ class Messages {
 	*/
 	protected $tpl_file	= null;
 	
-	private $parent_view = null;
-	
 	/**
 	* Create an instance of the Message class
 	*
 	* @return Object instance of Message class
 	*/
-	public function __construct($parent_view) {
-		$this->parent_view	= $parent_view;
+	public function __construct() {
 	}
 	
 	/**
@@ -379,7 +403,7 @@ class Messages {
 	* @param Boolean $clear clear messages after added to output
 	* @return Integer number of messages added to output
 	*/
-	public function display($clear=true) {
+	public function display($view, $clear=true) {
 		if ( !isset($_SESSION['messages']) ) {
 			return 0;
 		}
@@ -392,7 +416,7 @@ class Messages {
 			$content->enable_data_tags	= false;
 			$content->multiadd($_SESSION['messages'], 'msg_');
 			$msg_out	= $content->processTemplate($this->tpl_file);
-			$content->addToView($this->parent_view);
+			$content->addToView($view);
 			if ( $clear ) {
 				$this->clear();
 			}
