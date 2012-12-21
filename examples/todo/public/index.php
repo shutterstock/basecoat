@@ -7,12 +7,6 @@ define('DIR_LIB', realpath('../lib').'/');
 define('DIR_TPL', realpath('../templates').'/');
 define('DIR_ROUTES', realpath('../routes').'/');
 
-// Define the site root directory
-$site_dir		= realpath('../').'/';
-$path_routes	= $site_dir . 'routes/';
-$path_templates	= $site_dir . 'templates/';
-$path_layouts	= $path_templates . 'layouts/';
-
 include_once( '../../../basecoat/basecoat.php');
 $basecoat		= new \Basecoat\Basecoat();
 

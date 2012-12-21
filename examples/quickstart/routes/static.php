@@ -1,8 +1,8 @@
 <?php
 
-$content	= $basecoat->view->newView();
+$content = new \Basecoat\View();
 
-$tpl		= file_get_contents($basecoat->view->templates_path . $this->current['template']);
+$tpl = file_get_contents($basecoat->view->templates_path . $basecoat->routing->current['template']);
 
 $content->parseBlocks($tpl);
 

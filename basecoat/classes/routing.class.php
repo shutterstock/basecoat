@@ -222,7 +222,6 @@ class Routing {
 		}
 		// Check what URL format is in use
 		if ( $this->settings['use_pretty_urls'] ) {
-		echo 'Pretty URLS';
 			// Determine path relative to document root
 			$url_path	= str_replace(dirname($_SERVER['PHP_SELF']), '', $this->requested_url);
 			$url_path	= trim( parse_url($url_path, PHP_URL_PATH), '/');
