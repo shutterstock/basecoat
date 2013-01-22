@@ -19,7 +19,7 @@
 Overview
 </h2>
 <p>
-{{:sitename}} uses named routes and a hierarchical approach to processing routes. Rather than a full URL representing a single route, each directory/part in the URL is placed on a "stack" and processed as an individual route. Each route can continue processing the next item in the stack or modify the behavior based on the current state. This approach is based on the concept that top level routes need to run some code common to the subroutes and can act as a gatekeeper and/or preparer. This setup also allows the registering of routes on demand, only when needed. It is the job of the parent route to configure and register all the valid subroutes. 
+{{:sitename}} uses named routes and a traversal/hierarchical approach to processing routes. Rather than a full URL representing a single route, each "directory" in the URL is placed on a "stack" and processed as an individual route. Each route can continue processing the next item in the stack or modify the behavior/stack based on the current state. This approach is based on the concept that top level routes need to run some code common to the subroutes and can act as a gatekeeper and/or preparer. This setup also allows the registering of routes on demand, only when needed. It is the job of the parent route to configure and register all the valid subroutes. 
 </p>
 <p>
 For example, if a route and it's subroutes requires a user to be logged in, the parent route can check to see if the user is logged in. If the user is not logged, the route stack can be modified so that the next route to load is the login route instead of the requested route(s). This also allows the loading of any route under any URL, largely doing away with the need for expensive redirects.
@@ -34,49 +34,6 @@ Add additional routes after the initial routes are loaded. Routes with the same 
 <pre>$basecoat->routing->addRoutes( array )</pre>
 
 <br />
-
-<h2>Routing Class Variables</h2>
-<h4>requested_route (string)</h4>
-<p>
-The original route that was requested to be run, persists through all routes.
-</p>
-<h4>run_routes (array)</h4>
-<p>
-The list of routes to be run. This is treated as a stack, whereby each route is taken off the top and run. The <code>runNext()</code> method is used to process and remove the next route in the stack.
-</p>
-<h4>running_route (string)</h4>
-<p>
-The name of the current route being run.
-</p>
-<h4>current (array)</h4>
-<p>
-The configuration information about the currently running route.
-</p>
-<h4>profiling (array)</h4>
-<p>
-Array of profiling information for each route run and how long it took. Helpful for debugging and performance tuning.
-<pre>
-// Example output of a profiling, 1 route run
-Array
-(
-    [start] => 1355678392.207
-    [routes] => Array
-        (
-            [0] => Array
-                (
-                    [route] => /
-                    [time] => 0.00099992752075195
-                    [start] => 1355678392.207
-                    [end] => 1355678392.208
-                    [seq] => 1
-                )
-
-        )
-
-)
-</pre>
-</p>
-
 
 <h2>
 Processing
@@ -181,6 +138,48 @@ The static route is used for processing static content files (i.e. html) and mer
 <h4>undefined</h4>
 <p>
 If there is no matching configured route found, and no static file matching the requested route, then the <code>undefined</code> route will be run. By default, a route called <code>undefined</code> should always be configured. The name of this route can be customized with the <code>setUndefined([routename])</code> method.
+</p>
+
+<h2>Routing Class Variables</h2>
+<h4>requested_route (string)</h4>
+<p>
+The original route that was requested to be run, persists through all routes.
+</p>
+<h4>run_routes (array)</h4>
+<p>
+The list of routes to be run. This is treated as a stack, whereby each route is taken off the top and run. The <code>runNext()</code> method is used to process and remove the next route in the stack.
+</p>
+<h4>running_route (string)</h4>
+<p>
+The name of the current route being run.
+</p>
+<h4>current (array)</h4>
+<p>
+The configuration information about the currently running route.
+</p>
+<h4>profiling (array)</h4>
+<p>
+Array of profiling information for each route run and how long it took. Helpful for debugging and performance tuning.
+<pre>
+// Example output of profiling with 1 route run
+Array
+(
+    [start] => 1355678392.207
+    [routes] => Array
+        (
+            [0] => Array
+                (
+                    [route] => /
+                    [time] => 0.00099992752075195
+                    [start] => 1355678392.207
+                    [end] => 1355678392.208
+                    [seq] => 1
+                )
+
+        )
+
+)
+</pre>
 </p>
 
 <br />

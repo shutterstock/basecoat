@@ -29,49 +29,23 @@ File/Folder Structure
 </pre>
 
 <h2>
-Initilization
+Initialization
 </h2>
 <p>
 Initializing {{:sitename}} is done by creating and instance of the core {{:sitename}} class. Most implementations will then configure the following:
 <ol>
-<li>Configure Layouts and set default layout</li>
-<li>Set the Template directory path</li>
-<li>Configure the Routes</li>
+<li>Configure Layouts and set default layout<br />
+<code>$basecoat->view->setLayouts( array );</code><br />
+<code>$basecoat->view->setLayout('layout ID');</code>
+</li>
+<li>Set the Template directory path<br />
+<code>$basecoat->view->setTemplatesPath('templates/path');</code>
+</li>
+<li>Configure the Routes<br />
+<code>$basecoat->routing->setRoutes( array );</code>
+</li>
 </ol>
 </p>
-
-
-<h4>Basic Processing Example</h4>
-<pre>
-require_once('/basecoat/basecoat.php');
-$basecoat = new \Basecoat\Basecoat();
-
-$basecoat->view->setLayouts(
-	array(
-		'default' => 'layouts/path/common.php'
-	)
-);
-$basecoat->view->setLayout('default');
-$basecoat->view->setTemplatesPath('templates/path');
-
-$basecoat->routing->setRoutes(
-	array(
-		'/'	=> array(
-			'file' => 'routes/path/index.php',
-			'template' => 'index.tpl.php',
-		),
-		'example' => array(
-			'function'	=> function() use ($basecoat) {
-			   ...
-			},
-			'template' => 'example.tpl.php'
-		)
-	)
-);
-
-$output	= $basecoat->processRequest();
-echo $output;
-</pre>
 
 
 <br />
@@ -79,7 +53,7 @@ echo $output;
 URL Structure
 </h4>
 <p>
-Most web sites use mod_rewrite or something similar to create friendly/pretty URLs, instead of using URL parameters.
+Typically web sites use mod_rewrite or something similar to create friendly/pretty URLs, instead of using URL parameters.
 Since some websites may be hosted in a shared hosting environment, or have complex development environments where rewrite rules aren't available, the framework can be used in either mode. 
 Switching modes does not require extensive code changes, just a configuration toggle, so it's possible to develop using URL parameters and switch to using "pretty" urls in production. 
 <br />

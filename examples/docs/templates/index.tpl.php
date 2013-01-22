@@ -1,6 +1,6 @@
-<h2 class="page-header">
+<h3>
 Why Another PHP Framework?
-</h2>
+</h3>
 <ol>
 <li><b>No Commitment.</b> Most of the monolithic frameworks, and some of the lightweight ones, present an all or nothing scenario. You must commit to their naming and programming conventions to get everything working optimally. {{:sitename}} allows you to migrate to the framework without using "magic". Migrate a single page, or even part of a part. {{:sitename}} can even work within another framework.
 </li>
@@ -16,9 +16,9 @@ Why Another PHP Framework?
 </li>
 </ol>
 
-<h2 class="page-header">
+<h3>
 Introduction
-</h2>
+</h3>
 <p>
 {{:sitename}} is a flexible PHP framework based on modern design patterns like Front Controller, MVC and Inversion of Control. It provides the basic tools to handle what every website requires: routing, templating, database abstraction. {{:sitename}} is purposely light on modules. There are many robust modules and libraries public available for authentication, validation, payment processing, etc. 
 </p>
@@ -47,6 +47,7 @@ Almost all website now use "pretty" URLs. This requires Apache mod_rewrite rules
 Since most web sites also require backend processes to run periodically, {{:sitename}} also supports running scripts from the command line. It does not assume it is always processing a web page.
 </p>
 
+<h3>Quick Start</h3>
 <h4>Load, Configure and Process Request</h4>
 <pre>
 // Load
@@ -59,7 +60,9 @@ $basecoat->view->setLayouts(
 		'default' => 'layouts/path/common.php'
 	)
 );
+// Set layout to use
 $basecoat->view->setLayout('default');
+// Set path to templates directory
 $basecoat->view->setTemplatesPath('templates/path');
 
 // Define Routes
@@ -69,6 +72,7 @@ $basecoat->routing->setRoutes(
 			'file' => 'routes/path/index.php',
 			'template' => 'index.tpl.php',
 		),
+		// High performance route
 		'hello' => array(
 			'function'	=> function() {
 			   exit('Hello World!');

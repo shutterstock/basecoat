@@ -53,8 +53,7 @@ DB::setServerConfig($servers, 0);
 
 Finer control over connections can be specified with an additional 'attr' parameter option in the <code>$servers</code> list. 
 The 'attr' parameter will accept any valid PDO configuration options. 
-For example, by default the 'attr' parameter specifies using buffered queries when creating a connection:
-
+For example, the 'attr' parameter specifies using buffered queries when creating a connection:
 <pre>
 array(
 	'host' => IpAddress, 
@@ -64,6 +63,12 @@ array(
 	'attr'=>array(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY=>true)
 )
 </pre>
+<br />
+{{:sitename}} defaults to setting 2 attributes for every connection. These default attributes are merged with any attributes specified in the configuration. Attributes passed in will override default attributes. Following are the default attributes used by the {{:sitename}} DB class:
+<ol>
+<li>MYSQL_ATTR_USE_BUFFERED_QUERY = true</li>
+<li>MYSQL_ATTR_INIT_COMMAND = "SET NAMES UTF8"</li>
+</ol>
 
 </p>
 <br />
@@ -82,7 +87,7 @@ $db2 = DB::getServerInstance(2);
 // Force a new instance/connection to be established to the same server
 $db2_1 = DB::getServerInstance(2, true);
 </pre>
-Note: A connection to the database is not made until a query is run that requires the connection, so there is little overhead in creating database instances.
+Note: A connection to the database is not made until a query is run that requires the connection, so there is little overhead in creating database instances. Any initialization that needs to be done upon connection should be configured through the <code>attr</code> MYSQL_ATTR_INIT_COMMAND configuration option.
 </p>
 
 <br />
@@ -114,30 +119,16 @@ If the number returned is negative, that indicate an error occurred and the <cod
 // Using named data bindings
 $query = 'SELECT field1, field2, field3 FROM table1 WHERE field1 = :value1 AND field2 >= :value2';
 $bindings = array('value1'=>'some text', 'value2'=>4);
-$qresult = Core::$db->select( $query, $bindings);
+$qresult = $basecoat->db->select( $query, $bindings);
 
 // Using ? for data binding
 $query = 'SELECT field1, field2, field3 FROM table1 WHERE field1 = ? AND field2 >= ?';
 $bindings = array('some text', 4);
-$qresult = Core::$db->select( $query, $bindings);
+$qresult = $basecoat->db->select( $query, $bindings);
 
 // No data bindings
 $query = 'SELECT field1, field2, field3 FROM table1 WHERE field1 = "some text" AND field2 >= 4';
-$qresult = Core::$db->select( $query );
-</pre>
-</p>
-
-<p>
-<strong>selectOne( $query, $bindings=null, $useMaster=false )</strong>
-<br />
-Some times you know your query will only find one record, or only want to retrieve a single record. 
-For cases like this, use the selectOne function. 
-This works exactly like the <code>select</code> function, except that it retrieves the record if one is found.
-This eliminates the need to do a <code>fetch</code> after a select. 
-
-<pre>
-$query = 'SELECT field1, field2, field2 FROM table1 WHERE field1 = :value1 LIMIT 1';
-$data = Core::$db->selectOne( $query, array('value1'=>'X') );
+$qresult = $basecoat->db->select( $query );
 </pre>
 </p>
 
@@ -164,14 +155,14 @@ The second optional parameter can be any valid PDO retrieval method.
 The default method is PDO::FETCH_ASSOC.
 <pre>
 // fetch one record at a time
-$qresult = Core::$db->select( $query, $bindings );
+$qresult = $basecoat->db->select( $query, $bindings );
 if ( $qresult>0 ) {
 	$result_var	= array();
-	while ( $row = Core::$db->fetch() ) {
+	while ( $row = $basecoat->db->fetch() ) {
 		$result_var[] = $row;
 	}
 } else if ( $qresult<0 ) {
-	echo 'Error: '.Core::$db->errorCode.'-'.Core::$db->errorMsg;
+	echo 'Error: '.$basecoat->db->errorCode.'-'.$basecoat->db->errorMsg;
 }
 </pre>
 </p>
@@ -182,14 +173,14 @@ if ( $qresult>0 ) {
 This function can do much more than just return and array of records.
 You can specify which field value should be used for the array key.
 You can also specify that the results be grouped by the specified field, with the array key being the grouping key.
-This will return a hierchical array.
+This will return a hierarchical array.
 <pre>
-$query	= 'SELECT article_id,comment FROM comments WHERE comment_date<=DATE_SUB(NOW(),INTERVAL 1 DAY)';
-$qresult = Core::$db->select( $query );
+$query	= 'SELECT article_id,comment FROM comments WHERE comment_date&lt;=DATE_SUB(NOW(),INTERVAL 1 DAY)';
+$qresult = $basecoat->db->select( $query );
 $results_var = array();
 
 // Fetch all records at once
-Core::$db->fetchAll($results_var);
+$basecoat->db->fetchAll($results_var);
 // Result
 array(
 	0=>array('article_id'=>'123', 'comment'=>'this is great!'),
@@ -199,7 +190,7 @@ array(
 );
 
 // Group records by article_id
-Core::$db->fetchAll($results_var, 'article_id', true);
+$basecoat->db->fetchAll($results_var, 'article_id', true);
 // Result
 array(
 '123'=> array(
@@ -220,6 +211,38 @@ array(
 Sometimes you just need to get a list of values from the database and field names are not necessary.
 The <code>fetchField</code> function will retrieve the values of the field specified and return a single dimensional array.
 </p>
+
+<h3>
+SELECT One
+</h3>
+<p>
+<strong>selectOne( $query, $bindings=null, $useMaster=false )</strong>
+<br />
+Sometimes you know your query will only find one record, or you only want to retrieve a single record. 
+For cases like this, use the selectOne convenience function. 
+This works exactly like the <code>select</code> function, except that it retrieves the record if one is found.
+This eliminates the need to do a <code>fetch</code> after a select. 
+
+<pre>
+$query = 'SELECT field1, field2, field2 FROM table1 WHERE field1 = :value1 LIMIT 1';
+$data = $basecoat->db->selectOne( $query, array('value1'=>'X') );
+</pre>
+</p>
+
+<h3>Special "select"</h3>
+<p>
+Since the SELECT function does not dictate the structure of the query, any queries that return a list of data can be executed through this function. For example, to retrieve a list of tables or retrieve the list of processes:
+<pre>
+$query = 'SHOW TABLES';
+$qresult = $basecoat->db->select( $query );
+$basecoat->db->fetchAll($tables_list);
+
+$query = 'SHOW PROCESSLIST';
+$qresult = $basecoat->db->select( $query );
+$basecoat->db->fetchAll($process_list);
+</pre>
+</p>
+
 
 <br />
 <h3>
@@ -246,7 +269,7 @@ The <code>$action</code> parameter can be change to REPLACE instead of the defau
 <pre>
 // Single record insert
 $data = array('field1'=>'some text', 'field2'=>'other words', 'field3'=>4);
-BSP::$db->insert('tablename', $data);
+$basecoat->db->insert('tablename', $data);
 
 //Bulk insert
 $data = array(
@@ -254,7 +277,7 @@ $data = array(
    1=>array('field1'=>'text here, 'field2'=>'no worries', 'field3'=>12),
    2=>array('field1'=>'here is some text', 'field2'=>'fast', 'field3'=>9),
 );
-BSP::$db->insert('tablename', $data);
+$basecoat->db->insert('tablename', $data);
 </pre>
 </p>
 
@@ -270,60 +293,82 @@ Returns the auto increment value of the last inserted record.
 UPDATE
 </h3>
 <p>
-The <code>update</code> function is very similar to the <code>insert</code> function, except that it includes 2 extra filter parameters. The <code>$filter</code> parameter is any valid SQL clause. Optionally, a name/value array can also be passed as <code>$filterBindings</code> to be merged with the <code>$filter</code>.
-<p>
 <strong>update( $tablename, $data, $filter, $filterBindings=null, $useMaster=true )</strong>
 </p>
-
-
-<br />
-<h3>
-Prepare/Excute and Special Inserts
-</h3>
 <p>
-Sometimes there is a need to perform an insert with formulas and/or special functions (i.e. NOW(), field+1). In cases like these, a name/value data pairing will not work. The prepare/execute combination should be used when you need to do special inserts and/or queries like these. This still permits using the PDO bindings for escaping the data.
-Any type of complex queries (i.e. INSERT...SELECT) that do not fit the standard query types should use the prepare/execute combination.
-Note: You must specify to use the master connection for both prepare and execute, both functions default to using the slave connection.
-
-<pre>
-$query = 'INSERT INTO table1 (field1, field2, field3) VALUES (:value1, NOW(), :value2)';
-$presult = BSP::$db->prepare($query, true);
-if ( $presult==1 ) {
-  BSP::$db->execute( array('value1'=>'X', 'value2'=>'Y'), true);
-  $insertId = BSP::$db->getLastInsertId();
-}
-</pre>
-
-
+The <code>update</code> function is very similar to the <code>insert</code> function, except that it includes 2 extra filter parameters. The <code>$filter</code> parameter is any valid SQL clause. Optionally, a name/value array can also be passed as <code>$filterBindings</code> to be "bound" with the <code>$filter</code>.
 </p>
+
 <br />
 
 <h3>
 DELETE
 </h3>
-<p>Documentation To Do</p>
+<p>
+<strong>delete( $tablename, $filter, $filterBindings=null, $useMaster=true, $modifiers='' )</strong>
+</p>
+<p>The <code>delete</code> function is primarily a convenience function for escaping filter variables and profiling. The <code>$modifers</code> parameter will allow complex DELETEs, like deleting by joining tables together.
+</p>
+
+<br />
+<h3>
+PREPARE/EXECUTE Custom Queries
+</h3>
+<p>
+Sometimes there is a need to perform queries more complex than just basic bindings. For example, an insert with formulas and/or special functions (i.e. NOW(), field+1). In cases like these, a basic name/value data pairing will not work. The prepare/execute combination should be used when you need to do special inserts and/or queries like these. This still permits using the PDO bindings for escaping the data. 
+Any type of complex queries (i.e. INSERT...SELECT) that do not fit the standard query types should use the prepare/execute combination. Single PREPARE with multiple EXECUTE is also supported for running the same query multiple times where only the data changes.<br />
+Note: You must specify to use the master or slave connection for both prepare and execute, both functions default to using the slave connection. Internally {{:sitename}} actually runs all queries through the PREPARE/EXECUTE functions.
+
+<pre>
+$query = 'INSERT INTO table1 (field1, field2, field3) VALUES (:value1, NOW(), :value2)';
+$presult = $basecoat->db->prepare($query, true);
+if ( $presult==1 ) {
+  $basecoat->db->execute( array('value1'=>'X', 'value2'=>'Y'), true);
+  $insertId = $basecoat->db->getLastInsertId();
+}
+</pre>
+</p>
+
+<h3>
+Raw Queries
+</h3>
+Sometimes there is a need to run "queries" that do not fit in any of the typical INSERT, SELECT, UPDATE, DELETE. For these use cases there is a <code>rawQuery</code> function that gives you the ability to run any SQL command.
 
 <h3>
 Error Messages
 </h3>
 <p>
-Documentation To Do
+If an error is encountered during processing, the error code and message with be stored to the respective class variables $errorCode and $errorMsg. Those will always contain the last error encountered. All errors are also stored in a static <code>$errors</code> array, which will contain up to 10 errors. If more than 10 errors are encountered, an 11th error will be added to the <code>$errors</code> array indicating too many errors were encountered.
 <p>
 <strong>$errorCode</strong>
+<br />The error code for the last error encountered.
 </p>
 <p>
 <strong>$errorMsg</strong>
+<br />The error message for the last error encountered.
 </p>
 <p>
-<strong>DB::$errors</strong>
+<strong>DB::$errors</strong> 
+<br />Contains up to the first 10 errors encountered.
 </p>
 
 <h3>
 Profiling
 </h3>
-<p>Documentation To Do</p>
+<p>All queries are automatically logged to a static <code>$profiling</code> array to help in debugging and/or performance tuning. Each entry in the array will contain:
+<ol>
+<li>The connection label to determine which server the query ran against.</li>
+<li>The query string, including binding strings.</li>
+<li>The binding variables bound to the query statement.</li>
+<li>The time the query took to run.</li>
+</ol>
+</p>
+
 <p>
 <strong>getProfiling()</strong>
+<br />
+Return an array of profiling information. There are two profiling sections: meta and queries. The "meta" section contains summary information including db instances created, number of connections made, number of queries run, total time of queries, and number of errors. <br />
+The "queries" section contains all the queries run up the <code>$maxProfiling</code> limit set (default 30). The query, binding values, duration and result code are recorded with each query.
 </p>
 
 

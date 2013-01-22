@@ -96,12 +96,21 @@ TEXT
 ?>
 </pre>
 
+<h3>Data Tags</h3>
 <h4>But that's a lot of typing just to output a variable...</h4>
-<h4>Data Tags</h4>
 <p>
-{{:sitename}} supports the concept of "data tags" to make outputting the value of variables a bit easier. This is a very simple search and replace system, not part of a templating markup language. The default data tag structure is: {{:var_name}}. A data tag in that structure will output the contents of $this-&gt;var_name.<br />
-Data tags are are replaced after the template file has been loaded and the PHP code embedded in it has been run. Only scalar variables are supported.<br />
-By default, data tags that were not replaced by a variable persist for future processing. For example, "global" data tags can be embedded in templates that are replaced on final layout processing.
+{{:sitename}} supports the concept of "data tags" to make outputting the value of variables a bit easier. This is a very simple search and replace system, not part of a templating markup language. The default data tag structure is: <code>{{:var_name}}</code>. A data tag in that structure will output the contents of <code>$this-&gt;var_name</code>.<br />
+Data tags are replaced after the template file has been loaded and the PHP code embedded in it has been run. Only scalar variables are supported.<br />
+<h4>Global Data Tags</h4>
+By default, data tags that were not replaced by a variable persist for future processing. Values for global data tags can added to the default view for processing. For example, a {{:page_title}} data tag can be added to the default view. Since the default view is not processed until the very end, this value can then be modified by routes.
+<pre>
+// Register a value for global page title prefix
+$basecoat->view->add('page_title', 'Basecoat');
+...
+
+// Append text to the page title variable
+$basecoat->view->add('page_title', ': Content', true);
+</pre>
 </p>
 
 
@@ -230,9 +239,9 @@ Path to templates directory. Use as a prefix when referencing templates and layo
 </p>
 
 <p>
-<strong>add($name, $content)</strong>
+<strong>add($name, $content, $append=true)</strong>
 <br />
-Register $content under the variable $name. $content can be any data type (scalar, arrays, objects, etc).
+Register $content under the variable $name. $content can be any data type (scalar, arrays, objects, etc). If the same variable $name is used, it is assumed to be a scalar variable and $content is appended to the current variable.
 </p>
 
 <p>

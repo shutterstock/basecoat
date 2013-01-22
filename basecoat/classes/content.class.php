@@ -31,7 +31,7 @@ class View {
 	*   @block_name
 	*
 	*/
-	public $block_tag_regex	= '/^@(\\S+)>[\r\n]/m';
+	public $block_tag_regex	= '/^@(\S+)>[\r\n]/m';
 	
 	/**
 	* Content "blocks" in template files
@@ -195,7 +195,7 @@ class View {
 	}
 	
 	/**
-	* Add a content block under a specify namespace
+	* Add a content block under a specified namespace
 	*
 	* @param String $block_name namespace to add content block under
 	* @param String $content content to add
@@ -242,8 +242,7 @@ class View {
 	* @return Integer number of content blocks discovered
 	*/
 	public function parseBlocks($tpl) {
-		//$tpl_blocks	= preg_split('/^@(\\S+)>$/m', $tpl, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-		$tpl_blocks		= preg_split($this->block_tag_regex, $tpl, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+		$tpl_blocks		= preg_split($this->block_tag_regex, ltrim($tpl), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 		$blocks_parsed	= count($tpl_blocks);
 		if ( 1 == $blocks_parsed ) {
 			$this->addBlock($this->default_namespace, $tpl_blocks[0]);

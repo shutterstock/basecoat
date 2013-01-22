@@ -126,7 +126,9 @@ $routes = array(
 		'template'	=> 'login.tpl.php',
 	),
 	'hello'	=> array(
-		'file' 		=> 'helloworld.php',
+		'function'	=> function() {
+			   exit('Hello World!');
+			}
 	),
 	'undefined' => array(
 		'file'		=> $path_routes . '404.php',

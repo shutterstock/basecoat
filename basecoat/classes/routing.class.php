@@ -114,6 +114,7 @@ class Routing {
 		$basecoat	= $this->basecoat;
 		// check if valid route is specified
 		if ( !isset($this->routes[$route]) ) {
+			echo 'NOT SET';
 			// No route by that name, sanitize route name
 			$file_name = trim( trim(str_replace('/', '', $route)), '/');
 			// Check if there is a static template file matching request
