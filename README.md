@@ -4,7 +4,7 @@ Basecoat is designed to cover the basics: MVC, Front Controller, Templating, and
 The entire framework is about 5 files, so it is very easy to learn and start using. You should be able start creating a web site within a few hours (possibly 1 hour) of downloading the framework. Performance is quite good, handling hundreds of pages per second, even without accelerators like APC. It requires no special setup or configuration, not even mod_rewrite. It can be configured to use parameter based URLs or if you want "pretty urls", mod_rewrite or something similar.
 
 <h2>Documentation</h2>
-To get started, simply download the framework, including the examples. Place the whole framework in a web accessible directory and point your browser at basecoat/examples/docs/public/. The documentation is written using the framework, so you can view the code and see how it is working while you read through the documentation. Typically you would only have the www directory web accessible, but that is up to you.
+To get started, simply download the framework, including the examples. Place the whole framework in a web accessible directory and point your browser at basecoat/examples/docs/public/. The documentation is written using the framework, so you can view the code and see how it is working while you read through the documentation. Typically you would only have the public directory web accessible, but that is up to you.
 
 Once you are comfortable with the setup, you can move the framework directory to a centralized location that is not web accessible.
 
