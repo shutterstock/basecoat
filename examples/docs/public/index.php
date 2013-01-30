@@ -117,6 +117,10 @@ $routes = array(
 		'file' 		=> $path_routes . 'messages.php',
 		'template'	=> 'messaging.tpl.php',
 	),
+	'examples'	=> array(
+		'file' 		=> $path_routes . 'examples.php',
+		'template'	=> 'examples.tpl.php',
+	),
 	'json'	=> array(
 		'file' 		=> $path_routes . 'json.php',
 		'layout'	=> 'json',

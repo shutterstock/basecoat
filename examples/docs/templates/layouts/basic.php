@@ -33,6 +33,7 @@
 <li class="<?php echo $this->requested_route == "content" ? "active" : ""; ?>"><a href="?page=content">Content/Templates</a></li>
 <li class="<?php echo $this->requested_route == "messages" ? "active" : ""; ?>"><a href="?page=messages">Messaging</a></li>
 <li class="<?php echo $this->requested_route == "database" ? "active" : ""; ?>"><a href="?page=database">Database</a></li>
+<li class="<?php echo $this->requested_route == "examples" ? "active" : ""; ?>"><a href="?page=examples">Examples</a></li>
 </ul>
 <?php echo $this->messages; ?>
 

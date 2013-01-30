@@ -7,7 +7,6 @@ require_once("{$basecoat_dir}classes/routing.class.php");
 require_once("{$basecoat_dir}classes/content.class.php");
 
 class Basecoat {
-//	public $config = null;
 	
 	// Class holders
 	public $routing = null;
@@ -38,16 +37,6 @@ class Basecoat {
 		'Content-type'=>'text/html; charset=UTF-8',
 		'X-Powered-By'=>'Basecoat PHP framework'
 		);
-	
-	/**
-	* Content data
-	*/
-/*
-	public $content		= array(
-		'charset'	=> 'UTF-8',
-		'lang'		=> 'en'
-		);
-*/
 		
 	public function __construct() {
 		$this->routing	= new Routing($this);
@@ -56,12 +45,6 @@ class Basecoat {
 		$this->messages	= new Messages();
 		$this->messages->setTemplate(__DIR__ . '/templates/messages.tpl.php');
 	}
-	
-/*
-	public function setTemplatesPath($path) {
-		$this->templates_path	= $path;
-	}
-*/
 
 	public function addBeforeRender($func) {
 		$this->hooks['beforeRender'][]	= $func;
