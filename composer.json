@@ -1,0 +1,20 @@
+{
+    "name": "basecoat/basecoat",
+    "type": "library",
+    "description": "Basecoat Framework, a PHP base framework",
+    "keywords": ["framework","traversal","hierchical","router"],
+    "homepage": "https://github.com/shutterstock/basecoat",
+    "authors": [
+        {
+            "name": "Brent Baisley",
+            "email": "brent@shutterstock.com",
+            "homepage": "http://www.shutterstock.com/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "classmap": ["classes/"]
+    }
+}
