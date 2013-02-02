@@ -186,24 +186,25 @@ class Routing {
 						if ( is_callable($this->current['function']) ) {
 							$call_f();
 						} else {
-							error_log($route.' Route function not callable');
+							throw new \Exception('Route function not callable for "'.$this->running_route.'"');
 						}
 					}
 
 				} else {
-					error_log($route.' Route function not callable');
+					throw new \Exception('Route function not callable for "'.$this->running_route.'"');
 				}
 			}
+			// Check if a route has a file registered to run
 			if ( isset($this->current['file']) ) {
-				// Run route file
+				// Run file mapped to route
 				if ( file_exists($this->current['file']) ) {
 					include($this->current['file']);
 				} else {
-					echo 'NO ROUTE OR ROUTE FILE: '.$route;
+					throw new \Exception('File not found for "'.$this->running_route.'" route: '.$this->current['file']);
 				}
 			}
 		} else {
-			error_log("Sorry, but I'm afraid I can't do that. " . $route);
+			throw new \Exception('Undeclared route: '.$this->running_route);
 		}
 
 		$this->routeClose();
