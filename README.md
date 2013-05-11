@@ -1,7 +1,24 @@
-<h2>Why Another PHP Framework?</h2>
-The most popular frameworks are tending towards large code bases that almost require caching and a code accelerator, like APC, in order to perform well. There is also a tendency towards using static classes and variables. Finally, most frameworks force you to adopt their conventions and write your code "under" their framework.
+<h1>Basecoat Framework</h1>
+Basecoat is an effort to create a small (~2,000 lines of code), fast, static free micro framework that can be loaded as an instance and used like a library. It makes no assumptions about how your code is structured or how it works. This makes migrating from an old code base to Basecoat very feasible. Your old code can run along side Basecoat while migrating. Acceleration and caching is not a necessity for good performance (600+ pages/sec with a plain install).
 
-Basecoat is an effort to create a small (~2,000 lines of code), fast, static free framework that can be loaded as an instance. It makes no assumptions on how your code is structured. This makes migrating from an old code base very feasible. Your old code can run along side the framework while migrating. Acceleration and caching is not a necessity for good performance (500+ pages/sec out of the box).
+Basecoat continues to mature and is currently used by high traffic sites like footage.shutterstock.com, bigstockphoto.com and the Someecards' Facebook application. 
+
+<h2>Why Another PHP Framework?</h2>
+The most popular frameworks are tending towards large code bases that require caching and a code accelerators, like APC, in order to perform well. There is also a tendency towards using static classes and variables. Most frameworks force you to adopt their conventions and write your code "under" their framework.
+
+Basecoat allows you to use raw PHP to develop you application. Namespacing and scoping are available to keep code modularized.
+
+<h2>Features</h2>
+<ul>
+<li>Flexible, scalable router allowing hierarchies and anything to be loaded as a module</li>
+<li>Automatic redirects between http/https by use of a route parameter</li>
+<li>Template rendering as a module, allowing multiple renderings in a single request</li>
+<li>PHP as a templating language. No need to learn a different syntax to take advantage of the templating</li>
+<li>Flash message support</li>
+<li>Database abstraction layer based on PDO. Support for multiple master/slave connections, built-in profiling and auto-escaping of data.</li>
+<li>Hooks available to inject your own code at various stages</li>
+<li>Simple configuration and no dependencies</li>
+</ul>
 
 <h2>Overview</h2>
 Basecoat is designed to cover the basics: MVC, Front Controller, Templating, and Database abstraction. It is designed to be "included" in your code and using it as a full framework is optional. This allows one to build parts of a website in the framework and migrate over time. It does not enforce a coding style, naming convention, or have many dependencies. Basecoat is designed to be a centralized core code base that websites are built on. The same core code base can be loaded by many different web sites and/or applications. The configurations that dictate the framework's behavior are part of the your web site code, not the framework. Pulling in updates won't overwrite any of your own code. 
