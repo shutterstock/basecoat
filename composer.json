@@ -1,5 +1,5 @@
 {
-    "name": "basecoat/basecoat",
+    "name": "shutterstock/basecoat",
     "type": "library",
     "description": "Basecoat Framework, a PHP base framework",
     "keywords": ["framework","traversal","hierchical","router"],
