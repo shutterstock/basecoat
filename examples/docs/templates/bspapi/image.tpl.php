@@ -11,7 +11,7 @@ echo $this->image->title;
 <strong>Sizes available:</strong><br />
 <?php
 foreach($this->image->formats as $size) {
-	echo $size->label . ' ('.$size->height.' x '.$size->width.') <br />';
+    echo $size->label . ' ('.$size->height.' x '.$size->width.') <br />';
 }
 ?>
 </div>

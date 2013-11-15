@@ -64,8 +64,8 @@ $content->add('var1', 'Variable Content' );
 $content->add('var2', 'More Content' );
 $content->add('var3', array('supports','any','datatype') );
 $widgets	= array(
-	'widget1'	=> 'Today is '.date('l, F n, Y'),
-	'widget2'	=> 'It is '.date('z').' day of the year'
+    'widget1'	=> 'Today is '.date('l, F n, Y'),
+    'widget2'	=> 'It is '.date('z').' day of the year'
 );
 $content->multiadd( $widgets );
 </pre>
@@ -89,7 +89,7 @@ But there is <?php echo \$this->var2;?> to be shown.
 A list of words:
 <?php
 foreach(\$this->var3 as \$word) {
-	echo \$word.'<br />';
+    echo \$word.'<br />';
 }
 TEXT
 );
@@ -164,7 +164,7 @@ The simplest way to implement this would be to configure a "json" route that swi
 
 <h3>Merging Views</h3>
 <p>
-Any view can be merged with another view to build up output in a modular process. The content blocks of one view become the data input of another view. 
+Any view can be merged with another view to build up output in a modular process. The content blocks of one view become the data input of another view.
 <pre>
 $view1 = new \Basecoat\View();
 ...
@@ -247,7 +247,7 @@ Register $content under the variable $name. $content can be any data type (scala
 <p>
 <strong>multiadd($name_vals, $prefix=null)</strong>
 <br />
-A convenience function to register multiple content items using an associative array. 
+A convenience function to register multiple content items using an associative array.
 Keys are used for the variable $name, values are assigned to the variables.
 </p>
 
@@ -300,7 +300,7 @@ Returns array of all the data variables that currently exist in the instance. Co
 <p>
 <strong>getBlocks()</strong>
 <br />
-Returns array of all the content blocks that were parsed from the processing of a template. 
+Returns array of all the content blocks that were parsed from the processing of a template.
 </p>
 
 <p>

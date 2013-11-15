@@ -9,21 +9,21 @@ html,body {
 font-family: Arial, Helvetica, sans-serif;
 }
 body {
-	border: 1px solid #c0c0c0;
+    border: 1px solid #c0c0c0;
 }
 legend {
-	background-color: #606060;
-	color: #f0f0f0;
-	font-size: 10px;
-	font-weight: bold;
-	padding: 2px 5px;
+    background-color: #606060;
+    color: #f0f0f0;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 5px;
 }
 .section {
-	border: 1px solid #c0c0c0;
-	margin:2px;
+    border: 1px solid #c0c0c0;
+    margin:2px;
 }
 .content {
-	padding: 5px;
+    padding: 5px;
 }
 <?php echo $this->css; ?>
 

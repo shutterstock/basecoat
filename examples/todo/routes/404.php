@@ -10,4 +10,3 @@ $content->add('requested_page', $basecoat->routing->requested_url);
 $content->processTemplate($basecoat->view->templates_path . $basecoat->routing->current['template']);
 $content->addToView($basecoat->view);
 unset($content);
-

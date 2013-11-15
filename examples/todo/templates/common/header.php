@@ -1,9 +1,9 @@
 @page_header>
 <?php
 if ($this->use_pretty_urls) {
-	$task_url	= 'task/?id=new';
+    $task_url	= 'task/?id=new';
 } else {
-	$task_url	='?page=task&id=new';
+    $task_url	='?page=task&id=new';
 }
 ?>
 

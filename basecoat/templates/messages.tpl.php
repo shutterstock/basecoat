@@ -3,22 +3,22 @@
 <?php
 
 if ( isset($this->msg_info) ) {
-	echo '
+    echo '
 <div class="alert alert-info">'.
-	implode("<br />\n", $this->msg_info)
+    implode("<br />\n", $this->msg_info)
 .'</div>';
 }
 
 if ( isset($this->msg_warn) ) {
-	echo '
+    echo '
 <div class="alert">'.
-	implode("<br />\n", $this->msg_warn)
+    implode("<br />\n", $this->msg_warn)
 .'</div>';
 }
 
 if ( isset($this->msg_error) ) {
-	echo '
+    echo '
 <div class="alert alert-danger">'.
-	implode("<br />\n", $this->msg_error)
+    implode("<br />\n", $this->msg_error)
 .'</div>';
 }

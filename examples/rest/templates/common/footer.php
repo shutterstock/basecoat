@@ -1,8 +1,8 @@
 @css>
 .footer {
-	background-color: #f0f0f0;
-	border: 1px solid #c0c0c0;
-	font-size: 11px;
+    background-color: #f0f0f0;
+    border: 1px solid #c0c0c0;
+    font-size: 11px;
 }
 
 

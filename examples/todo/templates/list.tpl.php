@@ -1,16 +1,16 @@
 <?php
 if ($this->use_pretty_urls) {
-	$task_link	= 'task/?';
+    $task_link	= 'task/?';
 } else {
-	$task_link	= '?page=task&';
+    $task_link	= '?page=task&';
 }
 
 if ( count($this->pastdue)>0 ) {
-	echo '<h3 style="color:red">Past Due ' . ' ('.count($this->pastdue).')</h3>'; 
+    echo '<h3 style="color:red">Past Due ' . ' ('.count($this->pastdue).')</h3>';
 
-	$this->tasklist_title	= 'Past Due';
-	$this->tasklist			= $this->pastdue;
-	include( DIR_TPL . 'common/tasklist.tpl.php');
+    $this->tasklist_title	= 'Past Due';
+    $this->tasklist			= $this->pastdue;
+    include( DIR_TPL . 'common/tasklist.tpl.php');
 }
 ?>
 
@@ -19,5 +19,3 @@ if ( count($this->pastdue)>0 ) {
 $this->tasklist	= $this->todo;
 
 include( DIR_TPL . 'common/tasklist.tpl.php');
-
-

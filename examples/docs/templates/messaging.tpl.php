@@ -20,7 +20,7 @@ Each function can be called multiple times. Similar messages will automatically 
 <p>
 <strong>setTemplate($tpl_file)</strong>
 <br />
-Set the template file, relative to template directory, for the messaging class to use. 
+Set the template file, relative to template directory, for the messaging class to use.
 </p>
 
 <p>
@@ -54,4 +54,3 @@ This function is automatically called by {{:sitename}} before generating the fin
 <br />
 Clear all messages currently set, or optionally pass a message type (info, warn, error) to clear.
 </p>
-

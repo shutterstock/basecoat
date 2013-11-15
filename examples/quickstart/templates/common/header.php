@@ -1,11 +1,11 @@
 @css>
 .header {
-	background-color: #f0f0f0;
-	border: 1px solid #c0c0c0;
+    background-color: #f0f0f0;
+    border: 1px solid #c0c0c0;
 }
 
 .header h1 {
-	margin: 5px 0px;
+    margin: 5px 0px;
 }
 
 @page_header>

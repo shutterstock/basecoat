@@ -2,15 +2,15 @@
 
 try {
 $response	= $bsp->search(array(
-	'q'	=> $_GET['words']
-	));
+    'q'	=> $_GET['words']
+    ));
 } catch ( BspApiException $e) {
-	echo $e->getMessage();
-	exit();
+    echo $e->getMessage();
+    exit();
 }
 $response	= json_decode($response);
 if ( $response->response_code!=200 ) {
-	exit('ERROR: '.$response->response_code . ' ' . $response->message);
+    exit('ERROR: '.$response->response_code . ' ' . $response->message);
 }
 
 $paging	= $response->data->paging;

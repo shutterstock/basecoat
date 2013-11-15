@@ -12,4 +12,3 @@ $content->addToView($basecoat->view);
 unset($content);
 
 $basecoat->clearBeforeRender();
-

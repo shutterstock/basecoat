@@ -1,17 +1,17 @@
 @css>
 #config_grid {
-	border: 1px solid #f0f0f0;
+    border: 1px solid #f0f0f0;
 }
 #config_grid tr td {
-	padding: 4px 10px;
-	text-align: center;
+    padding: 4px 10px;
+    text-align: center;
 }
 #config_grid tr th {
-	padding: 2px 10px;
-	background-color: #f0f0f0;
+    padding: 2px 10px;
+    background-color: #f0f0f0;
 }
 #config_grid tr td:first-child {
-	text-align: left;
+    text-align: left;
 }
 
 @body>
@@ -19,7 +19,7 @@
 Overview
 </h2>
 <p>
-{{:sitename}} uses named routes and a traversal/hierarchical approach to processing routes. Rather than a full URL representing a single route, each "directory" in the URL is placed on a "stack" and processed as an individual route. Each route can continue processing the next item in the stack or modify the behavior/stack based on the current state. This approach is based on the concept that top level routes need to run some code common to the subroutes and can act as a gatekeeper and/or preparer. This setup also allows the registering of routes on demand, only when needed. It is the job of the parent route to configure and register all the valid subroutes. 
+{{:sitename}} uses named routes and a traversal/hierarchical approach to processing routes. Rather than a full URL representing a single route, each "directory" in the URL is placed on a "stack" and processed as an individual route. Each route can continue processing the next item in the stack or modify the behavior/stack based on the current state. This approach is based on the concept that top level routes need to run some code common to the subroutes and can act as a gatekeeper and/or preparer. This setup also allows the registering of routes on demand, only when needed. It is the job of the parent route to configure and register all the valid subroutes.
 </p>
 <p>
 For example, if a route and it's subroutes requires a user to be logged in, the parent route can check to see if the user is logged in. If the user is not logged, the route stack can be modified so that the next route to load is the login route instead of the requested route(s). This also allows the loading of any route under any URL, largely doing away with the need for expensive redirects.
@@ -51,7 +51,7 @@ The default URL to process is the currently requested URL. Optionally set a diff
 
 <p>
 <h4>processRequest()</h4>
-Allow {{:sitename}} to automatically start the processing of the current URL by calling this function. An optional URL parameter can be provided to process a URL other than the requested one. Typically this would be done for unit tests or command line processing where multiple "URLs" need to be processed and this function is called multiple times. 
+Allow {{:sitename}} to automatically start the processing of the current URL by calling this function. An optional URL parameter can be provided to process a URL other than the requested one. Typically this would be done for unit tests or command line processing where multiple "URLs" need to be processed and this function is called multiple times.
 <br />{{:sitename}} will only process the first route in the URL, it is up to the route controller to call the next route in the stack by calling <code>runNext()</code>. This allows other routes to be run, new routes registered, configurations changed, before the next route is processed. Since routing is hierarchical, subroute configurations are loaded dynamically using the <code>addRoutes()</code> method. Typically additional route configurations are registered by the current route controller.
 <blockquote>
 <b>Typical processing flow:</b><br />
@@ -66,7 +66,7 @@ Allow {{:sitename}} to automatically start the processing of the current URL by 
 Run a configured route. Pass the name of the route as configured in the registered routes array.
 </p>
 
-<h4>runNext()</h4> 
+<h4>runNext()</h4>
 This function can be called whether there is another route on the stack to process or not. If there are no more routes on the route stack, control simply returns to {{:sitename}} for final processing.
 <br />
 
@@ -81,10 +81,10 @@ This function can be called whether there is another route on the stack to proce
 <pre>
 // Configure and set routes
 $routes = array(
-	'route1'	=> array(
-		'file' 		=> 'route1.php',
-		'template'	=> 'route1.tpl.php',
-	),
+    'route1'	=> array(
+        'file' 		=> 'route1.php',
+        'template'	=> 'route1.tpl.php',
+    ),
 );
 $basecoat->routing->setRoutes($routes);
 
@@ -101,10 +101,10 @@ $content->addToView($basecoat->view);
 
 // Configure and register new routes
 $routes = array(
-	'route2'	=> array(
-		'file' 		=> 'route2.php',
-		'template'	=> 'route2.tpl.php',
-	),
+    'route2'	=> array(
+        'file' 		=> 'route2.php',
+        'template'	=> 'route2.tpl.php',
+    ),
 );
 $basecoat->routing->addRoutes($routes);
 $basecoat->routing->runNext();
@@ -131,7 +131,7 @@ $basecoat->routing->runNext();
 </p>
 <h4>static</h4>
 <p>
-The static route is used for processing static content files (i.e. html) and merging them with the configured layout. There is no need to configure a route for each file if the file has no special processing requirements. When a requested URL is not found in the configured route list, the static templates directory will be checked for a file with a matching name. Both the "route" name and the route name + .html are checked. The route name is sanitized (leading and trailing / and spaces are removed) before checking the for a file. If a file exists, an alias of the "static" route will be dynamically configured and run. 
+The static route is used for processing static content files (i.e. html) and merging them with the configured layout. There is no need to configure a route for each file if the file has no special processing requirements. When a requested URL is not found in the configured route list, the static templates directory will be checked for a file with a matching name. Both the "route" name and the route name + .html are checked. The route name is sanitized (leading and trailing / and spaces are removed) before checking the for a file. If a file exists, an alias of the "static" route will be dynamically configured and run.
 <br />By default, a route called <code>static</code> should always be configured. The name of this route can be customized with the <code>setStatic([routename])</code> method.
 </p>
 

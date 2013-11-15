@@ -14,25 +14,25 @@
 
 <style type="text/css">
 body {
-	padding: 0px 20px;
+    padding: 0px 20px;
 }
 .header {
-	background-color: #f0f0f0;
-	border-bottom: 2px solid #606060;
-	padding: 2px 2px 2px 5px;
+    background-color: #f0f0f0;
+    border-bottom: 2px solid #606060;
+    padding: 2px 2px 2px 5px;
 }
 .header h1, .header h4 {
-	margin: 0;
+    margin: 0;
 }
 .footer {
-	background-color: #f0f0f0;
-	border-top: 2px solid #606060;
-	font-size: smaller;
-	padding: 10px;
+    background-color: #f0f0f0;
+    border-top: 2px solid #606060;
+    font-size: smaller;
+    padding: 10px;
 }
 pre {
-	margin: 10px;
-	font-size: smaller;
+    margin: 10px;
+    font-size: smaller;
 }
 
 <?php echo $this->css; ?>

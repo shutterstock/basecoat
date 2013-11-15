@@ -1,9 +1,9 @@
 @page_footer>
 <?php
 if ($this->use_pretty_urls) {
-	$bulk_url	= 'bulk/';
+    $bulk_url	= 'bulk/';
 } else {
-	$bulk_url	= '?page=bulk';
+    $bulk_url	= '?page=bulk';
 }
 ?>
 

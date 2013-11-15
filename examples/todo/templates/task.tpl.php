@@ -8,12 +8,12 @@
 <select name="task_data[status_id]" class="span2">
 <?php
 foreach($this->status_opts as $opt) {
-	if ( $opt['sid']==$this->status_id ) {
-		$selected	= ' selected';
-	} else {
-		$selected	= '';
-	}
-	echo "<option label='{$opt['name']}' value='{$opt['sid']}'{$selected}>{$opt['name']}</option>";
+    if ( $opt['sid']==$this->status_id ) {
+        $selected	= ' selected';
+    } else {
+        $selected	= '';
+    }
+    echo "<option label='{$opt['name']}' value='{$opt['sid']}'{$selected}>{$opt['name']}</option>";
 }
 ?>
 </select>
@@ -27,12 +27,12 @@ foreach($this->status_opts as $opt) {
 <select name="task_data[category_id]" id="f_category">
 <?php
 foreach($this->category_opts as $opt) {
-	if ( $opt['sid']==$this->category_id ) {
-		$selected	= ' selected';
-	} else {
-		$selected	= '';
-	}
-	echo "<option label='{$opt['category']}' value='{$opt['sid']}'{$selected}>{$opt['category']}</option>";
+    if ( $opt['sid']==$this->category_id ) {
+        $selected	= ' selected';
+    } else {
+        $selected	= '';
+    }
+    echo "<option label='{$opt['category']}' value='{$opt['sid']}'{$selected}>{$opt['category']}</option>";
 }
 ?>
 </select>
@@ -46,5 +46,3 @@ foreach($this->category_opts as $opt) {
 
 <input type="submit" class="btn btn-primary" value="Save">
 <a href="../" class="btn">Cancel</a>
-
-

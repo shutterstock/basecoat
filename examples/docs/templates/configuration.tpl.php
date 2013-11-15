@@ -7,7 +7,7 @@ Overview
 </p>
 
 <p>
-{{:sitename}} is an "include" framework. You do not need to build your website "inside" the framework, 
+{{:sitename}} is an "include" framework. You do not need to build your website "inside" the framework,
 the framework is loaded by your code by instantiating the {{:sitename}} class. This setup allows multiple websites to be built around a single, common install of the framework.
 </p>
 
@@ -17,14 +17,14 @@ File/Folder Structure
 </h4>
 <pre class="pre-scrollable">
 /basecoat
-	basecoat.php
-	/classes
-		content.class.php
-		routing.class.php
-		db.pdo.php
-	/templates
-		messages.tpl.php
-	
+    basecoat.php
+    /classes
+        content.class.php
+        routing.class.php
+        db.pdo.php
+    /templates
+        messages.tpl.php
+
 /your_site
 </pre>
 
@@ -54,8 +54,8 @@ URL Structure
 </h4>
 <p>
 Typically web sites use mod_rewrite or something similar to create friendly/pretty URLs, instead of using URL parameters.
-Since some websites may be hosted in a shared hosting environment, or have complex development environments where rewrite rules aren't available, the framework can be used in either mode. 
-Switching modes does not require extensive code changes, just a configuration toggle, so it's possible to develop using URL parameters and switch to using "pretty" urls in production. 
+Since some websites may be hosted in a shared hosting environment, or have complex development environments where rewrite rules aren't available, the framework can be used in either mode.
+Switching modes does not require extensive code changes, just a configuration toggle, so it's possible to develop using URL parameters and switch to using "pretty" urls in production.
 <br />
 <pre>
 $basecoat->routing->set('use_pretty_urls', true);
@@ -126,34 +126,34 @@ Routes are configured by declaring an associative array of named routes. The arr
 <li><b>template</b> (string) a valid file name in the templates directory. This parameter is used internally by {{:sitename}} for special processing (i.e. servicing static files).
 <li><b>require_secure</b> (integer) automatically redirect the user to the secure version of the URL requested</li>
 <li><b>cacheable</b> (array) provides a way of declaring that a route is cacheable and how to cache.
-	<ul>
-	<li><b>expires</b> (string) a valid <code>strtotime</code> string indicating how long to cache the content for. Currently only adds cache headers to the output.</li>
-	</ul>
+    <ul>
+    <li><b>expires</b> (string) a valid <code>strtotime</code> string indicating how long to cache the content for. Currently only adds cache headers to the output.</li>
+    </ul>
 <li><b>layout</b> (string) name of the layout to use for rendering. Must map to a layout in the defined layouts list.</li>
 </ul>
 
 <pre>
 // Example route configuration array
 $routes = array(
-	'/' => array(
-		'file' => '/path/to/route_file.php',
-		'template' => 'index_tpl.php',
-	),
-	'example' => array(
-		'file' => '/path/to/example_route.php',
-		'template' => 'route_tpl.php',
-		'require_secure' => 1,
-	),
-	'static' => array(
-		'file' => '/path/to/static_route.php',
-		'cacheable' => array(
-			'expires' => '1 hour'
-		)
-	),
-	'not_found' => array(
-		'file' => '/path/to/404_route.php',
-		'template' => '404_tpl.php',
-	),
+    '/' => array(
+        'file' => '/path/to/route_file.php',
+        'template' => 'index_tpl.php',
+    ),
+    'example' => array(
+        'file' => '/path/to/example_route.php',
+        'template' => 'route_tpl.php',
+        'require_secure' => 1,
+    ),
+    'static' => array(
+        'file' => '/path/to/static_route.php',
+        'cacheable' => array(
+            'expires' => '1 hour'
+        )
+    ),
+    'not_found' => array(
+        'file' => '/path/to/404_route.php',
+        'template' => '404_tpl.php',
+    ),
 
 );
 </pre>

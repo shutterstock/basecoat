@@ -1,27 +1,27 @@
 @css>
 #image_container {
-	border: 5px solid #3f3f3f;
+    border: 5px solid #3f3f3f;
 }
 
 #image_container div {
-	float: left;
-	text-align:center;
-	height: 150px;
-	width: 150px;
-	margin: 5px;
-	padding: 5px;
-	border: 2px solid #3f3f3f;
-	overflow: hidden;
+    float: left;
+    text-align:center;
+    height: 150px;
+    width: 150px;
+    margin: 5px;
+    padding: 5px;
+    border: 2px solid #3f3f3f;
+    overflow: hidden;
 }
 #image_container a {
-	color: #e0e0e0;
-	font-weight: normal;
-	text-decoration: none;
-	font-size: smaller;
+    color: #e0e0e0;
+    font-weight: normal;
+    text-decoration: none;
+    font-size: smaller;
 }
 #image_container div img {
-	border: 0px;
-	margin-top: 10px;
+    border: 0px;
+    margin-top: 10px;
 }
 
 @body>
@@ -37,13 +37,13 @@ Page <?php echo $this->page_no;?> of <?php echo $this->page_count;?>
 <?php
 foreach($this->images as $image) {
 ?>
-	<div>
-		<a href="?page=image&id=<?php echo $image->id;?>">
-		<img src="<?php echo $image->small_thumb->url;?>" height="<?php echo $image->small_thumb->height;?>" width="<?php echo $image->small_thumb->width;?>" />
-		</a>
-		<br />
-		<a href="?page=image&id=<?php echo $image->id;?>"><?php echo $image->title;?></a>
-	</div>
+    <div>
+        <a href="?page=image&id=<?php echo $image->id;?>">
+        <img src="<?php echo $image->small_thumb->url;?>" height="<?php echo $image->small_thumb->height;?>" width="<?php echo $image->small_thumb->width;?>" />
+        </a>
+        <br />
+        <a href="?page=image&id=<?php echo $image->id;?>"><?php echo $image->title;?></a>
+    </div>
 <?php
 }
 
