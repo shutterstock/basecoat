@@ -12,20 +12,20 @@ class View
     /**
     * Layout template to use
     */
-    public $layouts	= array();
-    public $layout	= null;
+    public $layouts = array();
+    public $layout = null;
 
-    public $templates_path	= null;
+    public $templates_path = null;
 
     /**
     * Namespace to place content in if none is specified
     */
-    public $default_namespace	= 'body';
+    public $default_namespace = 'body';
 
     /**
     * Name/value pairing of data tags available to templates
     */
-    public $data			= array();
+    public $data = array();
 
     /**
     * Regular expression to use to parse out block tags
@@ -33,31 +33,32 @@ class View
     *   @block_name
     *
     */
-    public $block_tag_regex	= '/^@(\S+)>[\r\n]/m';
+    public $block_tag_regex = '/^@(\S+)>[\r\n]/m';
 
     /**
     * Content "blocks" in template files
     */
-    public $blocks			= array();
+    public $blocks = array();
 
     /**
     * Enable data tag search and replace
     */
-    public $enable_data_tags	= true;
+    public $enable_data_tags = true;
 
     /**
     * Data tag delimiters
     */
-    public $data_tags_delimiters	= array('prefix'=>'{{:','suffix'=>'}}');
+    public $data_tags_delimiters = array(
+        'prefix'  => '{{:',
+        'suffix'  => '}}',
+    );
 
     /**
     * Create an instance of the Content class
     *
     * @return Object instance of Content class
     */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /*
     * Load the list of layouts. An associative array where the key is the layout name
@@ -67,10 +68,10 @@ class View
     * @param Array $layouts associative array of layouts names and relative paths
     * @param String $default name of layout to set as default
     */
-    public function setLayouts($layouts, $default=null)
+    public function setLayouts($layouts, $default = null)
     {
-        $this->layouts	= $layouts;
-        if ( !is_null($default) ) {
+        $this->layouts = $layouts;
+        if (!is_null($default)) {
             $this->setLayout($default);
         }
     }
@@ -82,7 +83,7 @@ class View
     */
     public function setLayout($layout_name)
     {
-        $this->layout	= $layout_name;
+        $this->layout = $layout_name;
     }
 
     /*
@@ -94,7 +95,7 @@ class View
     public function getLayout($layout_name=null)
     {
         if (is_null($layout_name)) {
-            $layout_name	= $this->layout;
+            $layout_name = $this->layout;
         }
         return $this->layouts[$layout_name];
     }
@@ -106,18 +107,18 @@ class View
     */
     public function setTemplatesPath($path)
     {
-        $this->templates_path	= $path;
+        $this->templates_path = $path;
     }
 
     /**
     * Getter method for returning a data item
     *
-    * @return Mixed	value of the data item
+    * @return Mixed value of the data item
     */
     public function __get($name)
     {
         if ( !isset($this->data[$name]) ) {
-            $this->data[$name]	= null;
+            $this->data[$name] = null;
         }
         return $this->data[$name];
     }
@@ -142,12 +143,12 @@ class View
     */
     public function add($name, $content, $append=true)
     {
-        if ( isset($this->data[$name]) && $append ) {
-            $this->data[$name]	.= $content;
+        if (isset($this->data[$name]) && $append) {
+            $this->data[$name] .= $content;
         } else {
-            $this->data[$name]	= $content;
+            $this->data[$name] = $content;
         }
-        $this->$name		= $this->data[$name];
+        $this->$name = $this->data[$name];
     }
 
     /**
@@ -159,8 +160,8 @@ class View
     */
     public function multiadd($name_vals, $prefix=null)
     {
-        foreach($name_vals as $name=>$val ) {
-            $this->add($prefix.$name, $val);
+        foreach ($name_vals as $name => $val) {
+            $this->add("{$prefix}{$name}", $val);
         }
     }
 
@@ -179,8 +180,8 @@ class View
         }
         if ( count($this->data)>0 ) {
             // create tags
-            $makeTags	= function (&$tag, $key, $tag_wrap) {
-                $tag	= $tag_wrap['prefix'].$tag.$tag_wrap['suffix'];
+            $makeTags = function (&$tag, $key, $tag_wrap) {
+                $tag = $tag_wrap['prefix'].$tag.$tag_wrap['suffix'];
             };
             // Extract scalar variable
             $data_tags = array();
@@ -189,21 +190,21 @@ class View
                     $data_tags[$k] = $v;
                 }
             }
-            $tag_keys	= array_keys($data_tags);
+            $tag_keys = array_keys($data_tags);
             array_walk($tag_keys, $makeTags, $this->data_tags_delimiters);
             // search and replace data tags
-            $tpl		= str_replace($tag_keys, $data_tags, $tpl);
+            $tpl = str_replace($tag_keys, $data_tags, $tpl);
         }
         // cleanup any lingering tags
         //$this->stripDataTags($tpl);
-        //$tpl	= preg_replace('/{{:.[^}}]+}}/', '', $tpl);
+        //$tpl = preg_replace('/{{:.[^}}]+}}/', '', $tpl);
         //return $tpl;
 
     }
 
     public function stripDataTags(&$tpl)
     {
-        $tpl	= preg_replace('/{{:.[^}}]+}}/', '', $tpl);
+        $tpl = preg_replace('/{{:.[^}}]+}}/', '', $tpl);
         //return $tpl;
     }
 
@@ -215,10 +216,10 @@ class View
     */
     public function addBlock($block_name, $content)
     {
-        if ( isset($this->blocks[$block_name]) ) {
-            $this->blocks[$block_name]	.= $content;
+        if (isset($this->blocks[$block_name])) {
+            $this->blocks[$block_name] .= $content;
         } else {
-            $this->blocks[$block_name]	= $content;
+            $this->blocks[$block_name] = $content;
         }
     }
 
@@ -232,15 +233,15 @@ class View
     */
     public function processTemplate($tpl, $parse=true)
     {
-        if ( file_exists($this->templates_path . $tpl) ) {
-            $tpl	= $this->templates_path . $tpl;
+        if (file_exists($this->templates_path . $tpl)) {
+            $tpl = $this->templates_path . $tpl;
         }
-        if ( !file_exists($tpl) ) {
+        if (!file_exists($tpl)) {
             return -1;
         }
         ob_start();
         include($tpl);
-        $content	= ob_get_clean();
+        $content = ob_get_clean();
         $this->replaceDataTags($content);
         if ( $parse ) {
             return $this->parseBlocks($content);
@@ -258,19 +259,19 @@ class View
     */
     public function parseBlocks($tpl)
     {
-        $tpl_blocks		= preg_split($this->block_tag_regex, ltrim($tpl), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-        $blocks_parsed	= count($tpl_blocks);
+        $tpl_blocks  = preg_split($this->block_tag_regex, ltrim($tpl), -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+        $blocks_parsed = count($tpl_blocks);
         if ( 1 == $blocks_parsed ) {
             $this->addBlock($this->default_namespace, $tpl_blocks[0]);
         } else {
-            $blocks_parsed	= $blocks_parsed/2;
-            $namespace		= $this->default_namespace;
+            $blocks_parsed = $blocks_parsed/2;
+            $namespace  = $this->default_namespace;
             foreach($tpl_blocks as $i=>$data) {
                 if ( $i%2==0 ) {
                     if ( strlen($data)>30 ) {
                         $this->addBlock($namespace, $data);
                     } else {
-                        $namespace	= $data;
+                        $namespace = $data;
                     }
                 } else {
                     $this->addBlock($namespace, $data);
@@ -288,8 +289,8 @@ class View
         foreach($this->data as $namespace=>$data) {
             unset($this->$namespace);
         }
-        $this->data		= array();
-        $this->blocks	= array();
+        $this->data  = array();
+        $this->blocks = array();
     }
 
     /**
