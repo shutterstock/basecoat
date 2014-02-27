@@ -19,9 +19,10 @@ File/Folder Structure
 /basecoat
     basecoat.php
     /classes
-        content.class.php
-        routing.class.php
-        db.pdo.php
+        view.php
+        messages.php
+        routing.php
+        db.php
     /templates
         messages.tpl.php
 

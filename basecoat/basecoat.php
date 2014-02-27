@@ -1,10 +1,12 @@
 <?php
+
 namespace Basecoat;
 
 $basecoat_dir	= __DIR__ . '/';
 
-require_once("{$basecoat_dir}classes/routing.class.php");
-require_once("{$basecoat_dir}classes/content.class.php");
+require_once("{$basecoat_dir}classes/routing.php");
+require_once("{$basecoat_dir}classes/view.php");
+require_once("{$basecoat_dir}classes/messages.php");
 
 class Basecoat
 {
@@ -69,7 +71,7 @@ class Basecoat
 
     public function loadDb($settings, $master_id, $slave_id)
     {
-        require_once(__DIR__ . '/classes/db.pdo.php');
+        require_once(__DIR__ . '/classes/db.php');
         \Basecoat\DB::setServerConfig($settings, $master_id);
         $this->db 	= \Basecoat\DB::getServerInstance($slave_id);
     }
