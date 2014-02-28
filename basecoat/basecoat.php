@@ -2,11 +2,9 @@
 
 namespace Basecoat;
 
-$basecoat_dir = __DIR__ . '/';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-require_once("{$basecoat_dir}classes/routing.php");
-require_once("{$basecoat_dir}classes/view.php");
-require_once("{$basecoat_dir}classes/messages.php");
+$basecoat_dir = __DIR__ . '/';
 
 class Basecoat
 {
@@ -70,9 +68,8 @@ class Basecoat
 
     public function loadDb($settings, $master_id, $slave_id)
     {
-        require_once(__DIR__ . '/classes/db.php');
-        \Basecoat\DB::setServerConfig($settings, $master_id);
-        $this->db = \Basecoat\DB::getServerInstance($slave_id);
+        DB::setServerConfig($settings, $master_id);
+        $this->db = DB::getServerInstance($slave_id);
     }
 
     public function processRequest($url = null)
