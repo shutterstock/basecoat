@@ -12,16 +12,14 @@ class Messages
     /**
     * Template file to use for message output
     */
-    protected $tpl_file	= null;
+    protected $tpl_file = null;
 
     /**
     * Create an instance of the Message class
     *
     * @return Object instance of Message class
     */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
     * Set the template file to use for message output
@@ -30,7 +28,7 @@ class Messages
     */
     public function setTemplate($tpl_file)
     {
-        $this->tpl_file	= $tpl_file;
+        $this->tpl_file = $tpl_file;
     }
 
     /**
@@ -90,13 +88,13 @@ class Messages
     protected function add($type, $message)
     {
         if ( !isset($_SESSION['messages']) ) {
-            $_SESSION['messages']			= array();
+            $_SESSION['messages']   = array();
         }
-        $type	= strtolower($type);
+        $type = strtolower($type);
         if ( isset($_SESSION['messages'][$type]) ) {
-            $_SESSION['messages'][$type][]	= $message;
+            $_SESSION['messages'][$type][] = $message;
         } else {
-            $_SESSION['messages'][$type]	= array($message);
+            $_SESSION['messages'][$type] = array($message);
         }
         return count($_SESSION['messages'][$type]);
     }
@@ -112,15 +110,15 @@ class Messages
         if ( !isset($_SESSION['messages']) ) {
             return 0;
         }
-        $msg_count	= 0;
+        $msg_count = 0;
         foreach($_SESSION['messages'] as $msgs) {
-            $msg_count	+=count($msgs);
+            $msg_count +=count($msgs);
         }
         if ( $msg_count>0 ) {
-            $content	= new View();
-            $content->enable_data_tags	= false;
+            $content = new View();
+            $content->enable_data_tags = false;
             $content->multiadd($_SESSION['messages'], 'msg_');
-            $msg_out	= $content->processTemplate($this->tpl_file);
+            $msg_out = $content->processTemplate($this->tpl_file);
             $content->addToView($view);
             if ( $clear ) {
                 $this->clear();
