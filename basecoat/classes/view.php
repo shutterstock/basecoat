@@ -79,7 +79,7 @@ class View
     /*
     * Set the layout to use for output. Name must match one set with setLayouts().
     *
-    * @param String @layout_name name of layout
+    * @param String $layout_name name of layout
     */
     public function setLayout($layout_name)
     {
