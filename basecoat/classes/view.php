@@ -79,7 +79,7 @@ class View
     /*
     * Set the layout to use for output. Name must match one set with setLayouts().
     *
-    * @param String @layout_name name of layout
+    * @param String $layout_name name of layout
     */
     public function setLayout($layout_name)
     {
@@ -113,6 +113,7 @@ class View
     /**
     * Getter method for returning a data item
     *
+    * @param String $name Name of the data item to return
     * @return Mixed value of the data item
     */
     public function __get($name)
@@ -316,6 +317,7 @@ class View
     /**
     * Merge content blocks for this instance with passed instance
     *
+    * @param \Basecoat\View $view Instance to add content blocks to
     * @return Integer number of content blocks merged
     */
     public function addToView($view)
