@@ -1,6 +1,7 @@
 {
     "name": "shutterstock/basecoat",
     "type": "library",
+    "license": "MIT",
     "description": "Basecoat Framework, a PHP base framework",
     "keywords": ["framework","traversal","hierchical","router"],
     "homepage": "https://github.com/shutterstock/basecoat",
